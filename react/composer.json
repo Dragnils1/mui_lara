@@ -1,0 +1,23 @@
+{
+    "name": "mike/goroskop2",
+    "description": "Project about goroskop and svat",
+    "autoload": {
+        "psr-4": {
+            "Mike\\Goroskop2\\": "api/"
+        }
+    },
+    "require": {
+        "parsecsv/php-parsecsv": "^1.3",
+        "symfony/dotenv": "^5.4",
+        "google/apiclient": "^2.12",
+        "phpmailer/phpmailer": "^6.5"
+    },
+    "scripts": {
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+    },
+    "extra": {
+        "google/apiclient-services": [
+            "Drive"
+        ]
+    }
+}

@@ -1,0 +1,74 @@
+mainModer:
+	login: mainModerator@goro.com
+	pass: KMgPfWJZRYeZ1y72Z4dR
+moderator1:
+	login: Moderator1@goro.com
+	pass: fCZLEp2wFX
+moderator2:
+	login: Moderator2@goro.com
+	pass: mj5poFZF9c
+moderator3:
+	login: Moderator3@goro.com
+	pass: EKDVRu3U89
+moderator4:
+	login: Moderator4@goro.com
+	pass: Fpaq4gzvBm
+moderator5:
+	login: Moderator5@goro.com
+	pass: cqcJKFgBG3
+moderator6:
+	login: Moderator6@goro.com
+	pass: R2n5g1PV5n
+moderator7:
+	login: Moderator7@goro.com
+	pass: TVrZu4t6WU
+moderator8:
+	login: Moderator8@goro.com
+	pass: 8NcVyxGVRW
+moderator9:
+	login: Moderator9@goro.com
+	pass: 1arFderjzn
+consideration:
+	login: consideration@goro.com
+	pass: dhsajd12
+
+Адрес ПУА: https://cp.beget.com  
+Имя пользователя: goroskdv
+Пароль:  ah5MDjtP
+
+
+Новый доступ :
+goroskdv.beget.tech
+goroskdv_456
+hMFK&8TY
+
+Почта:
+goroskdv@svat-astrolog.com
+pAdw4%%T
+
+
+Иерархия статусов:
+0-главный модер
+1-9 модераторы - 1000 (именно у самих модератов а не у юзеров)
+10-админ -1
+25-модерация (no changes)
+26-активный-1
+27-пассивный -1
+28-на обработке -11
+29-общая база-1
+30-архив - 2
+31-клиенты из эксель (одно и тоже, что на обработке)
+32-корзина -3
+33-избранные
+1000 - consideration (именно сам), админ
+
+
+1000 - статус для всех сотрудников
+roles:
+0 - users
+1 - main Moder
+2 - moders
+3 - admin
+120 - consideration
+
+"proxy": "http://mui/"
