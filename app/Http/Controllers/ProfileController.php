@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\ProfileActions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,9 @@ class ProfileController extends Controller
     {
         $input = $request->all();
 
-        $profile = $input['profile'];
+        $profile = json_decode($input['profile'], true);
+
+        // dd($profile);
 
         $maybeUndefinedFilds = ['comment', 'user_InNum', 'user_OutNum'];
 
@@ -46,26 +49,32 @@ class ProfileController extends Controller
         // Hash the password
         $profile['password'] = Hash::make($profile['password']);
 
-        // dd($profile);
         $user = Profile::create($profile);
+        $profile_actions = ProfileActions::create(["profile_id" => $user->id]);
 
-        // dd($user);
-        // dd($user->id);
+
         //создаем запись в таблице действий (нужны для сотрудников и работы приложения)
-        (new ProfileActionsController)->store(["profile_id" => $user->id]);
+        if($user->source_type == 'Квиз') {
 
-        auth()->login($user);
+            auth()->login($user);
 
-        auth()->user()->tokens()->delete();
+            auth()->user()->tokens()->delete();
 
-        # And make sure to use the plainTextToken property
-        # Since this will return us the plain text token and then store the hashed value in the database
-        $token = auth()->user()->createToken('auth_token')->plainTextToken;
+            # And make sure to use the plainTextToken property
+            # Since this will return us the plain text token and then store the hashed value in the database
+            $token = auth()->user()->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                "user"  => $user,
+                "token"  => $token
+             ]);
+        }
 
         return response()->json([
-            "user"  => $user,
-            "token"  => $token
+            "user"  => $user
          ]);
+
+
     }
 
     /**
@@ -73,7 +82,10 @@ class ProfileController extends Controller
      */
     public function show(string $id)
     {
-        //
+
+        $profile = Profile::where('id', $id)->get()->toArray();
+
+        return response()->json($profile);
     }
 
 
@@ -109,6 +121,9 @@ class ProfileController extends Controller
             'dragableColor',
             'reg_date'
         ];
+
+        // Hash the password
+        $profile_from_request['password'] = Hash::make($profile_from_request['password']);
 
 
         //Сохраняем картинки и добавляем пути в images Array который

@@ -14,4 +14,5 @@ export default [
     {path: 'profile', elem: <ProfileAdd />},
     {path: 'profile/:user_id', elem: <Profile />},
     {path: 'compatibility/:user_id', elem: <Compatibility />},
+    {path: 'profile-add', elem: <ProfileAdd />},
 ]

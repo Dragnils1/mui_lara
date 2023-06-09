@@ -14,19 +14,21 @@ import MailIcon from '@mui/icons-material/Mail';
 import { FC } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { changePath, p } from '../../../reducers/adminSlice';
-import { useAppDispatch } from '../../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 import { Button, Grid } from '@mui/material';
 import { deleteCookie, getCookie } from '../../../functions/Cookie';
 import { auth, MainState } from '../../../reducers/mainSlice';
 
 interface SidebarCells {
     name: string,
-    href: string
-    dist?: string
+    href: string,
+    dist?: string,
+    custom_query?: boolean;
 }
 
 const ClippedDrawer: FC = () => {
 
+    const { user } = useAppSelector(state => state.auth)
     const dispatch = useAppDispatch()
     let navigate = useNavigate();
 
@@ -38,28 +40,29 @@ const ClippedDrawer: FC = () => {
 
     const returnSidebarCells = () => {
 
-        switch (getCookie('role')) {
-            case 'ok_admin':
+        switch (user.role) {
+            case 'admin':
                 return (
                     [
                         { name: 'Модерация', href: 'moderation', dist: 'moderation' },
-                        { name: 'Линия 1', href: 'table', dist: 'moderation' },
+                        { name: 'Линия 1', href: 'table', dist: 'main_moder' },
                         { name: 'Линия 2', href: 'lines', dist: 'lines' },
-                        { name: 'На обработке', href: 'table', dist: 'cons' },
+                        { name: 'На обработке', href: 'table', dist: 'consideration' },
                         { name: 'Добавить клиента', href: 'profile-add' },
-                        { name: 'Активный поиск', href: 'table', dist: 'profiles' },
-                        { name: 'Пассивный поиск', href: 'table', dist: 'profiles' },
+                        { name: 'Активный поиск', href: 'table', dist: 'profiles&vip=1' },
+                        { name: 'Пассивный поиск', href: 'table', dist: 'profiles&vip=0' },
                         { name: 'Общая база', href: 'table', dist: 'profiles' },
-                        { name: 'Избранные', href: 'table', dist: 'get_fav_orders' },
+                        { name: 'Избранные', href: 'table',
+                            dist: 'status_not=employee&not_fav_date=true', custom_query: true },
                         { name: 'Текстовая конс.', href: '№' },
                         { name: 'Архив', href: 'table', dist: 'archive' },
                         { name: 'Корзина', href: 'table', dist: 'trash' },
                         { name: 'Клиенты из Excel', href: '#' },
                         { name: 'Импорт', href: 'import' },
-                        { name: 'Доступ', href: 'table', dist: 'access'}
+                        { name: 'Доступ', href: 'table', dist: 'employee'}
                     ]
                 )
-            case 'ok_mainModer':
+            case 'main_moder':
                 return (
                     [
                         { name: 'Модерация', href: 'moderation', dist: 'moderation' },
@@ -115,8 +118,8 @@ const ClippedDrawer: FC = () => {
                     <Typography variant="h6" noWrap component="div">
                         Goroskop
                     </Typography>
-                    <Button 
-                        sx={{marginLeft: '95%', backgroundColor: 'red'}} 
+                    <Button
+                        sx={{marginLeft: '95%', backgroundColor: 'red'}}
                         variant='contained'
                         onClick={Logout}
                         >
@@ -139,10 +142,11 @@ const ClippedDrawer: FC = () => {
                             return(
                                     <Link to={text.href} key={index}
                                         style={{ textDecoration: 'none', color: 'black', }}>
-                                        <ListItem 
-                                            onClick={() => text.dist && dispatch(changePath({ path: text.dist, name: text.name}))} 
+                                        <ListItem
+                                            onClick={() => text.dist &&
+                                                dispatch(changePath({ path: text.custom_query ? text.dist : 'status=' + text.dist, name: text.name}))}
                                             button  sx={{ maxHeight: 'inherit', borderBottom: '1mm solid rgb(170, 50, 220, .6);' }}>
-                                            
+
                                             <ListItemText primary={
                                                 <>
                                                     <ListItemIcon sx={{ marginLeft: '43%', }}>
@@ -151,11 +155,11 @@ const ClippedDrawer: FC = () => {
                                                     <Typography  component='p' style={{ textAlign: 'center', margin: 0}}>
                                                         {text.name}
                                                     </Typography>
-                                                        
-                                                </>} 
+
+                                                </>}
                                                 sx={{ maxHeight: 'inherit'}}
                                             />
-                                            
+
                                         </ListItem>
                                     </Link>
                             )

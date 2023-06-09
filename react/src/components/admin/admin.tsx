@@ -10,7 +10,7 @@ const Admin : FC = () => {
 
     const {path, name} = useAppSelector(state => state.adminSlice)
 
-    const { data, error, isLoading, currentData } = useGetApiQuery(path + '.php')
+    const { data, error, isLoading, currentData } = useGetApiQuery(`find_person?${path}`)
     const headCells: HeadCell[] = [
         {
             id: 'firstname',
@@ -32,14 +32,14 @@ const Admin : FC = () => {
 
     let newDate = data
     //  Ну я ниче лучше не придумал
-    
-    
-    
+
+
+
     if (name === 'Активный поиск') {
         newDate = data?.filter(elem => elem.vip == '1')
     } else if (name === 'Пассивный поиск') {
         newDate = data?.filter(elem => elem.vip == '0')
-    } 
+    }
     else if (name === 'Доступ') {
         newDate = data?.filter(elem => {
             const keyArr: any = ['firstname', 'email', 'visible_pass', 'id']
@@ -49,26 +49,26 @@ const Admin : FC = () => {
           }, {}))})
     }
 
-    
-    const MemoizedTable = useCallback(() => 
+
+    const MemoizedTable = useCallback(() =>
             <>
                 {data && (
                     <>
-                        {name === 'Доступ' 
+                        {name === 'Доступ'
                          ?
                         <EnhancedTableWithSelect   data={newDate ? newDate : data} nameOfTable={name}
                             headCellsProp={ headCells } /> :
-                            <EnhancedTable 
+                            <EnhancedTable
                                 data={newDate ? newDate : data} nameOfTable={name}
                         />}
-                        
-                            
+
+
                     </>
                 )}
             </>
         , [currentData])
 
-    
+
 
     return(
         <>

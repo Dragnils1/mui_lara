@@ -107,7 +107,7 @@ const ProfileAdd: FC = () => {
             r_pass: "",
             dateofend: "",
             source: "",
-            source_type: "Квиз",
+            source_type: "Ручной",
             images: "",
             o_img1: "",
             o_img2: "",
@@ -143,14 +143,13 @@ const ProfileAdd: FC = () => {
         newData.status = data.status ?? restrictRole()
 
         let fd = new FormData()
-        fd.append('data', JSON.stringify(newData))
+        fd.append('profile', JSON.stringify(newData))
         // fd.append('o_img1', data.o_img1)
         // fd.append('o_img2', data.o_img2)
         // fd.append('o_img3', data.o_img3)
         // fd.append('o_img4', data.o_img4)
         console.log(fd.get('data'));
-
-        submitData({ name: 'register.php', data: fd })
+        submitData({name: `profile`, data: fd})
         console.log(data.o_img1)
     };
 

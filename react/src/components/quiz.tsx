@@ -162,18 +162,17 @@ const Quiz = ({ quizRef }: { quizRef?: ((instance: unknown) => void) | React.Mut
 
         })
 
-        fd.append("_method", "PUT");
+
         fd.append('profile', JSON.stringify(newdataQuiz))
 
         if (value === 7) {
-            submitData({name: 'profile', data: {profile: newdataQuiz}}).unwrap()
+            submitData({name: 'profile', data: fd}).unwrap()
                 .then((res) =>
                     dispatch(changeUser({user: (res as any)?.user as Person}))
                 )
 
-            localStorage.removeItem('bearer-TOKEN')
-
         } else {
+            fd.append("_method", "PUT");
             submitData({name: `profile/${user.id}`, data: fd})
         }
 
@@ -505,7 +504,7 @@ const Quiz = ({ quizRef }: { quizRef?: ((instance: unknown) => void) | React.Mut
                                 </Card>
                             )})
                         }
-                        <input type="file" {...register('o_img1')} />
+                        <input {...register('o_img1')} type="file" onChange={handleChange}/>
                         <input {...register('o_img2')} type="file" onChange={handleChange} />
                         <input {...register('o_img3')} type="file" onChange={handleChange} />
                         <input {...register('o_img4')} type="file" onChange={handleChange} />

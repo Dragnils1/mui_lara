@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\ProfileActions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,28 +38,24 @@ class AuthorizationController extends Controller
 
         $userWithBcryptPass = Auth::attempt($credentials);
 
+        $user = $userWithBcryptPass ? Auth::user() : $userWithMd5Pass;
+
+        $profile_actions = ProfileActions::firstOrCreate([
+            'profile_id' => $user->id
+        ]);
+
+        //Проверка, если пользователь не прошел модерацию главного админа
+        // то не сможет пройти авторизацию
+        if($profile_actions->status == 'main_moder') return response()->json([
+            "fail"  => "Вы еще не прошли модерфцию. Пожалуста ожидайте."
+         ]);
+
         if($userWithMd5Pass){
             Auth::login($userWithMd5Pass);
             return generateTokenAndResponse($userWithMd5Pass);
         }
 
         if($userWithBcryptPass) return generateTokenAndResponse(Auth::user());
-
-        // if (Auth::attempt($credentials)) {
-        //     // $request->session()->regenerate();
-        //     $user = Auth::user();
-
-        //     auth()->user()->tokens()->delete();
-
-        //     $token = $user->createToken('auth_token')->plainTextToken;
-
-        //     //сделать функцию проверки роили и возвращать текст (admin,.,user)
-
-        //     return response()->json([
-        //         'user' => $user,
-        //         'token' => $token
-        //     ]);
-        // }
 
         return response()->json([
             'errors' => [

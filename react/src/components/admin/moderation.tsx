@@ -1,31 +1,34 @@
 import { FC, useEffect} from "react";
 import { getCookie } from "../../functions/Cookie";
 import { useAppSelector } from "../../hooks/hooks";
-import { useSubmitDataMutation } from "../../services/goroskop";
+import { useGetApiQuery, useSubmitDataMutation } from "../../services/goroskop";
 import EnhancedTable from "./constituents/Table";
 
 const Moderation: FC = () => {
 
     const {  name, date } = useAppSelector(state => state.adminSlice)
-    
-    const [submitData, {data, error, isLoading, }] = useSubmitDataMutation()
+
+
+
+    // const [submitData, {data, error, isLoading, }] = useSubmitDataMutation()
+    const { data, error, isLoading, currentData } = useGetApiQuery(`moderation`)
 
 
     let newDate = date && data ? typeof data === 'string' ? JSON.parse(data) : true : false
 
-    
-    
+
+
     //  Ну я ниче лучше не придумал
 
-    useEffect(()=> {
-        let role = getCookie('role')
-        
-        let fd = new FormData()
-        fd.append('role', name === 'Модерация админа' ? 'ok_admin' : ( role ?? ''))
+    // useEffect(()=> {
+    //     let role = getCookie('role')
 
-        submitData({ name: 'moderation.php', data: fd });
+    //     let fd = new FormData()
+    //     fd.append('role', name === 'Модерация админа' ? 'ok_admin' : ( role ?? ''))
 
-    }, [])
+    //     submitData({ name: 'moderation.php', data: fd });
+
+    // }, [])
 
     return (
         <>

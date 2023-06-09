@@ -80,7 +80,7 @@ export const goroskopAPI = createApi({
         }),
         submitDataWithRerender: builder.mutation<string | QuizType[], SubmitDataType>({
             query: ({ name, data }: SubmitDataType) => ({
-                url: `/${name}`,
+                url: `/api/${name}`,
                 method: 'POST',
                 body: data
             }),
@@ -88,7 +88,7 @@ export const goroskopAPI = createApi({
         }),
         SubmitStatus: builder.mutation<string, string | FormData>({
             query: (post) => ({
-                url: `/status_save.php`,
+                url: `/find_person`,
                 method: 'POST',
                 body: post
             }),

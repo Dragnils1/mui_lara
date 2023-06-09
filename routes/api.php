@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,10 @@ Route::resource('profile', ProfileController::class);
 Route::post('login', [AuthorizationController::class, 'authenticate']);
 Route::post('register', [AuthorizationController::class, 'register']);
 Route::post('checkAuth', [AuthorizationController::class, 'checkAuth']);
+Route::get('find_person', [AdminController::class, 'findPersons']);
+Route::get('moderation', [AdminController::class, 'moderation']);
+Route::get('lines', [AdminController::class, 'lines']);
+
 
 
 // Route::group(['middleware' => ['auth:sanctum']],  function() {

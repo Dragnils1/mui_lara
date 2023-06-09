@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,12 +12,18 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Profile extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Filterable;
 
 
+
+    protected $connection = 'mysql';
     /**
-     * Получить комментарии к посту блога.
+     * The table associated with the model.
+     *
+     * @var string
      */
+    protected $table = 'profiles';
+
     public function profile_actions(): HasOne
     {
         return $this->hasOne(ProfileActions::class);
@@ -26,14 +33,6 @@ class Profile extends Authenticatable
     {
         return $this->hasOne(Role::class);
     }
-
-    protected $connection = 'mysql';
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'profiles';
 
     /**
      * The attributes that are mass assignable.

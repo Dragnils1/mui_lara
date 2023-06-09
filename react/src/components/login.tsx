@@ -67,10 +67,10 @@ export default function Login() {
     };
 
     useEffect(() => {
-        console.log(data);
+
 
         if (data?.token && data?.user) {
-            dispatch(changeUserAndBearerToken(data))
+            dispatch(changeUserAndBearerToken({user: data.user, bearerToken: data.token}))
         }
 
         if (data && isSuccess) {

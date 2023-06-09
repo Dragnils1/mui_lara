@@ -12,6 +12,7 @@ import ClippedDrawer from './components/admin/constituents/sidebar';
 import PrivateWrapper from "./routes/ProtectedRoute";
 import AdminRoutes from "./routes/AdminRoutes";
 import UserRoutes from "./routes/UserRoutes";
+import Admin from "./components/admin/admin";
 
 
 function App() {
@@ -34,22 +35,22 @@ function App() {
           </Route> */}
 
 
-            <Route  element={<PrivateWrapper allowedRoles={['4JoWnkJXL4']} />}>
+            <Route  element={<PrivateWrapper allowedRoles={['admin']} />}>
 
                 <Route path='/admin' element={<ClippedDrawer />}>
                     {AdminRoutes.map(({path, elem}) => {
-                        <Route key={path} path={path} element={{elem}} />
+                        return <Route key={path} path={path} element={elem} />
                     })}
                 </Route>
 
             </Route>
 
 
-            <Route  element={<PrivateWrapper allowedRoles={['4JoWnkJXL4']} />}>
+            <Route  element={<PrivateWrapper allowedRoles={['user']} />}>
 
                 <Route path='/cabinet/:user_id' element={<CabinetHeader />}>
                     {UserRoutes.map(({path, elem}) => {
-                        <Route key={path} path={path} element={{elem}} />
+                        return <Route key={path} path={path} element={elem} />
                     })}
                 </Route>
 
