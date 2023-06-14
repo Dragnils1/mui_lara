@@ -34,10 +34,12 @@ return new class extends Migration
             $table->string('langlove2', 255);
             $table->string('phone', 255)->unique();
             $table->string('zodiak', 255);
+
             // только эта часть
 
 
             $table->string('about', 1000);
+            $table->string('registermonth', 255);
             $table->string('birthdaychild1', 255);
             $table->string('birthdaychild2', 255);
             $table->string('birthdaychild3', 255);

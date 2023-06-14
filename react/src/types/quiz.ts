@@ -31,10 +31,10 @@ export type QuizAction =
 export interface QuizType extends Data {
     r_pass: string,
     images: string,
-    o_img1: FileList | string,
-    o_img2: FileList | string,
-    o_img3: FileList | string,
-    o_img4: FileList | string,
+    o_img1: File | string,
+    o_img2: File | string,
+    o_img3: File | string,
+    o_img4: File | string,
     politic: boolean,
     passwordConfirm?: string
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,14 +22,21 @@ Route::middleware('auth:sanctum')->get('user', function (Request $request) {
     return $request->user();
 });
 
+Route::resource('dashboard', AdminController::class);
 Route::resource('profile', ProfileController::class);
+Route::resource('photo', PhotoController::class);
 
 Route::post('login', [AuthorizationController::class, 'authenticate']);
 Route::post('register', [AuthorizationController::class, 'register']);
 Route::post('checkAuth', [AuthorizationController::class, 'checkAuth']);
+Route::get('logout', [AuthorizationController::class, 'logout']);
 Route::get('find_person', [AdminController::class, 'findPersons']);
 Route::get('moderation', [AdminController::class, 'moderation']);
 Route::get('lines', [AdminController::class, 'lines']);
+Route::get('export', [AdminController::class, 'export']);
+
+
+
 
 
 

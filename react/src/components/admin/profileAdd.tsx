@@ -17,13 +17,14 @@ import PopUpImage from "../quiz/PopUpImage"
 import ZodiakDropDown from "../quiz/zodiakDropDown"
 import Carousel from "../forAll/Carousel"
 import FormInputReactMask from "../quiz/form-component/FormInputReactMask"
+import { useAppSelector } from "../../hooks/hooks"
 
 
 interface ImmageArr {
-    o_img1: File | null;
-    o_img2: File | null;
-    o_img3: File | null;
-    o_img4: File | null
+    o_img1: File | string;
+    o_img2: File | string;
+    o_img3: File | string;
+    o_img4: File | string
 }
 
 const Form = styled('form')({
@@ -49,16 +50,23 @@ const Input = styled('input')({
     display: 'none',
 });
 
+
+const elementsForDelete:
+    Array<keyof  Pick<QuizType, 'o_img1' | 'o_img2' | 'o_img3' | 'o_img4'>> = ['o_img1', 'o_img2', 'o_img3', 'o_img4']
+
+
 const ProfileAdd: FC = () => {
 
     const [imageArr, setImageArr] = useState<ImmageArr>({
-        o_img1: null,
-        o_img2: null,
-        o_img3: null,
-        o_img4: null
+        o_img1: '',
+        o_img2: '',
+        o_img3: '',
+        o_img4: ''
     })
+
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const [submitData, { data, error }] = useSubmitDataWithRerenderMutation()
+    const { user } = useAppSelector(state => state.auth)
 
     const slider = Object.values(imageArr).map(item => {
         return (
@@ -129,28 +137,50 @@ const ProfileAdd: FC = () => {
         }
     });
 
+
+
     const onSubmit: SubmitHandler<QuizType> = data => {
 
-        enqueueSnackbar('Клиент успешно добавлен', {
-            variant: 'success',
-        });
+        // enqueueSnackbar('Клиент успешно добавлен', {
+        //     variant: 'success',
+        // });
 
         let newData = data
-
-        console.log(data.status);
-
-
-        newData.status = data.status ?? restrictRole()
-
         let fd = new FormData()
+
+        newData.images = ['','','',''].join()
+
+        // Object.keys(imageArr).forEach(el => {
+
+        //     if(newData[(el as any) as keyof QuizType]) {
+        //         fd.append(el, newData[(el as any) as keyof QuizType] as File)
+        //     }
+
+
+
+        // })
+
+        elementsForDelete.forEach(el => {
+
+            console.log(data[el]);
+
+            if(newData[el]) {
+                fd.append(el, newData[el])
+            }
+
+        })
+
+        // newData.images = Object.values(imageArr).join(',')
+        newData.status = data.status ?? user.role
+
+
         fd.append('profile', JSON.stringify(newData))
+        // fd.append("_method", "PUT");
         // fd.append('o_img1', data.o_img1)
         // fd.append('o_img2', data.o_img2)
         // fd.append('o_img3', data.o_img3)
         // fd.append('o_img4', data.o_img4)
-        console.log(fd.get('data'));
         submitData({name: `profile`, data: fd})
-        console.log(data.o_img1)
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,8 +195,28 @@ const ProfileAdd: FC = () => {
 
         }
 
-        const nameOfImg = e.target.name === 'o_img2' || e.target.name === 'o_img3' || e.target.name ===  'o_img4'  ? e.target.name : 'o_img1'
-        const file = e.target.files ? e.target.files[0] : ''
+        const strOfImg = (Object.values(imageArr)).join(',')
+
+        setValue(e.currentTarget.name as keyof QuizType, e.target.files ? e.target.files[0] : '')
+        setValue('images', strOfImg)
+
+
+    }
+
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    //     const fR = new FileReader()
+
+    //     e.target.files && fR.readAsDataURL(e.target.files[0])
+
+
+    //     fR.onload = () => {
+    //         setImageArr({ ...imageArr, [e.target.name]: fR.result })
+
+    //     }
+
+    //     const nameOfImg = e.target.name === 'o_img2' || e.target.name === 'o_img3' || e.target.name ===  'o_img4'  ? e.target.name : 'o_img1'
+    //     const file = e.target.files ? e.target.files[0] : ''
 
         // console.log(nameOfImg, file);
 
@@ -174,7 +224,7 @@ const ProfileAdd: FC = () => {
         // setValue(nameOfImg, file)
 
 
-    }
+    // }
 
     const deleteImage = (nameImg: number) => {
         setImageArr({ ...imageArr, [Object.keys(imageArr)[nameImg]]: null })
@@ -332,7 +382,7 @@ const ProfileAdd: FC = () => {
                 <T>
                     Дата вступления в базу
                 </T>
-                <FormInputDate control={control} label='Выберите дату заполнения анкеты' name="reg_date" />
+                <FormInputDate control={control} label='Выберите дату заполнения анкеты' name="created_at" />
 
                 <T>
                     Месяц вступления в базу

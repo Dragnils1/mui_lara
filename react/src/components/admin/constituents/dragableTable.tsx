@@ -562,7 +562,7 @@ const DraggableEnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, profi
                             <TableCell align="left" size='small' onClick={() => sendStatus(row.id, '-2', 'status')} >
                                 <AccountBoxIcon />
                             </TableCell>
-                            <TableCell align="left">{row.reg_date}</TableCell>
+                            <TableCell align="left">{row.created_at}</TableCell>
                             <TableCell align="left">{row.last_modify}</TableCell>
                             <TableCell align="left">{row.source_type}</TableCell>
                             <TableCell align="left">{row.source}</TableCell>

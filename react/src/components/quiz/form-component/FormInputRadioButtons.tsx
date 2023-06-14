@@ -25,12 +25,12 @@ const FormInputRadioButton: React.FC<CheBoxProps> = ({
                     <RadioGroup
                         row
                         aria-labelledby="demo-form-control-label-placement"
-                        name={"position" + value + name}
+                        name={"position_" + value + name}
                         // sx={{
                         //     flexDirection: 'column',
                         //     alignContent: 'flex-start',
                         //     minHeight: '163px',
-                            
+
                         // }}
                         defaultValue="top"
                     >
@@ -41,7 +41,7 @@ const FormInputRadioButton: React.FC<CheBoxProps> = ({
                                     value={option ?? ' '}
                                     sx={{
                                         border: ['1px', 'solid', 'rgb(103 38 255)'],
-                                        color: 'white', 
+                                        color: 'white',
                                         borderRadius: '5px',
                                         backgroundColor: '#8768c8',
                                         margin: '5px',
@@ -54,7 +54,7 @@ const FormInputRadioButton: React.FC<CheBoxProps> = ({
                                 />
                             );
                         })}
-                        
+
 
                     </RadioGroup>
 

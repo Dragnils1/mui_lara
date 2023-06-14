@@ -15,14 +15,14 @@ const Profile: FC = () => {
 
     let { user_id } = useParams()
 
+    const [fav, setFav] = useState<any>('')
+
 
     // const [submitData, { data, error, isLoading }] = useSubmitDataMutation()
-    const { data, error, isLoading, currentData } = useGetApiQuery(`profile/${user_id}`)
-    const [favSubData, favData ] = useSubmitDataMutation();
+    const { data, error, isLoading, isSuccess, currentData } = useGetApiQuery(`profile/${user_id}`)
+    const favData = useGetApiQuery(`find_person?id_in=${fav}`, {skip: !fav.length})
 
     let deepCloneData = (favData.data && typeof favData.data !== 'string') ? cloneDeep(favData.data) : []
-
-    // const account = useWhoIs().Account
 
 
     const newData = (favData.data && typeof favData.data !== 'string' && data && typeof data !== 'string' && deepCloneData.length) ?
@@ -33,21 +33,12 @@ const Profile: FC = () => {
 
     let FormDefaultValues = data ? (typeof data[0] != 'string' ? data[0] as QuizType : false) : false
 
-    // useEffect (() => {
-    //     let fd = new FormData()
-    //     fd.append('user_id', user_id ? user_id : '')
-
-    //     submitData({ name: 'profile.php', data: fd })
-
-    // }, [user_id])
 
     useEffect(() => {
-        let fd = new FormData()
-        fd.append('fav', typeof FormDefaultValues !== 'boolean' ? FormDefaultValues.fav : '')
 
-        favSubData({ name: 'cabinet/get_favorites.php', data: fd })
+        setFav(typeof FormDefaultValues !== 'boolean' ? FormDefaultValues.fav : '')
 
-    }, [FormDefaultValues])
+    }, [isSuccess])
 
 
     return (

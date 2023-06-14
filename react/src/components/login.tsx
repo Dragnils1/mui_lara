@@ -47,6 +47,8 @@ export default function Login() {
 
     let navigate = useNavigate();
 
+    const emloyees = ['admin', 'consideration', 'main_admin', '']
+
     const onSubmit: SubmitHandler<LoginType> = subData => {
 
         // deleteAllCookie()
@@ -71,6 +73,14 @@ export default function Login() {
 
         if (data?.token && data?.user) {
             dispatch(changeUserAndBearerToken({user: data.user, bearerToken: data.token}))
+
+            if(data.user?.role === 'user') navigate(`../cabinet/${data.user.id}`, { replace: true });
+            else navigate('../admin/moderation', { replace: true });
+
+        } else {
+            enqueueSnackbar('Упс... Неправильный логин или пороль', {
+                variant: 'error',
+            })
         }
 
         if (data && isSuccess) {

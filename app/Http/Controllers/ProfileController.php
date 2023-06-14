@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Profile;
 use App\Models\ProfileActions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+
+
 use Illuminate\Support\Str;
 
 class ProfileController extends Controller
@@ -37,20 +40,73 @@ class ProfileController extends Controller
 
         $profile = json_decode($input['profile'], true);
 
+
         // dd($profile);
 
         $maybeUndefinedFilds = ['comment', 'user_InNum', 'user_OutNum'];
+        $filesForUpload = [
+            'o_img1',
+            'o_img2',
+            'o_img3',
+            'o_img4',
+        ];
+        $elementsForDelete = array_merge([
+            'politic',
+            'passwordConfirm',
+        ], $filesForUpload);
+        $profileActions = [];
+        $profileActionsColumns = [
+            'defer',
+            'color',
+            'last_modify',
+            'next_contact_date',
+            'visible_pass',
+            'status',
+            'dragableColor',
+            'created_at'
+        ];
+
+        //Сохраняем картинки и добавляем пути в images Array который
+        // хранится в БД
+        foreach ($filesForUpload as $key => $file) {
+
+            $file_if_exist = $request->file($file);
+            $images_arr_from_request =  explode(",", $profile['images']);
+
+            if ($file_if_exist)
+                $images_arr_from_request[$key] = Storage::disk('public')->putFile('photos', $file_if_exist) ?? '';
+
+
+            // dd(implode(",", $images_arr_from_request));
+            $profile['images'] = implode(",", $images_arr_from_request);
+
+        }
 
         //некоторые поля могут не передаваться в запросе
         foreach ($maybeUndefinedFilds as $value) {
             if (!isset($profile[$value])) $profile[$value] = '';
         }
 
+        foreach ($profile as $k => $v) {
+            if(in_array($k, $profileActionsColumns)) {
+                $profileActions[$k] = $v;
+                unset($profile[$k]);
+            };
+        }
+
+
+        // Удаляем лишние элементы
+        foreach ($elementsForDelete as $el) {
+            if (isset($profile[$el])) unset($profile[$el]);
+        }
+
         // Hash the password
         $profile['password'] = Hash::make($profile['password']);
 
         $user = Profile::create($profile);
-        $profile_actions = ProfileActions::create(["profile_id" => $user->id]);
+        $profile_actions = ProfileActions::create(array_merge(["profile_id" => $user->id], $profileActions));
+
+
 
 
         //создаем запись в таблице действий (нужны для сотрудников и работы приложения)
@@ -119,11 +175,11 @@ class ProfileController extends Controller
             'visible_pass',
             'status',
             'dragableColor',
-            'reg_date'
+            'created_at'
         ];
 
         // Hash the password
-        $profile_from_request['password'] = Hash::make($profile_from_request['password']);
+        if(isset($profile_from_request['password'])) $profile_from_request['password'] = Hash::make($profile_from_request['password']);
 
 
         //Сохраняем картинки и добавляем пути в images Array который
@@ -134,7 +190,7 @@ class ProfileController extends Controller
             $images_arr_from_request =  explode(",", $profile_from_request['images']);
 
             if ($file_if_exist)
-                $images_arr_from_request[$key] = Storage::putFile('photos', $file_if_exist) ?? '';
+                $images_arr_from_request[$key] = Storage::disk('public')->putFile('photos', $file_if_exist) ?? '';
 
 
             // dd(implode(",", $images_arr_from_request));

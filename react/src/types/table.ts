@@ -13,6 +13,7 @@ export interface Tableprops {
     nameOfTable?: string,
     profile?: QuizType;
     headCellsProp?: HeadCell[]
+    path_with_params?: string;
 }
 
 export interface EnhancedTableToolbarProps {
@@ -137,7 +138,7 @@ export const headCells: HeadCell[] = [
         label: 'Регистрация',
     },
     {
-        id: 'reg_date',
+        id: 'created_at',
         label: 'Последнее изменение',
     },
     {

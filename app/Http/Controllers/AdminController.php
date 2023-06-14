@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 // use App\Http\Filters\profile\ProfileFilter;
+use App\Exports\ProfileActionsExport;
 use App\Http\Filters\ProfileFilter;
 use App\Models\Profile;
 use App\Models\ProfileActions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Exports\ProfilesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -18,6 +21,7 @@ class AdminController extends Controller
     public function findPersons(Request $request)
     {
         // dd($request->all());
+
         $filter = app()->make(ProfileFilter::class, ['queryParams' => array_filter($request->all())]);
         $profiles = ProfileActions::filter($filter)->getDataFromProfilesAndJoinToArray();
         // $profiles = ProfileActions::joinDataWithProfiles()->filter($filter)->dataToArray();
@@ -25,6 +29,16 @@ class AdminController extends Controller
 
         return response()->json($profiles);
     }
+
+    public function export(Request $request)
+    {
+        // return Excel::download(new ProfilesExport, 'profiles.csv', \Maatwebsite\Excel\Excel::CSV);
+        // dd($request->all());
+        $filter = app()->make(ProfileFilter::class, ['queryParams' => array_filter($request->all())]);
+        return (new ProfileActionsExport)->forFilter($filter)->download('profile_actions.csv');
+    }
+
+
 
     public function moderation()
     {
@@ -83,7 +97,21 @@ class AdminController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+        $input = $request->all();
+        foreach (['id', 'user_id', '_method'] as $el) {
+            if (isset($input[$el])) unset($input[$el]);
+        }
+
+        // dd(ProfileActions::where('profile_id', $request->get('id'))->first());
+
+        $updated_actions = ProfileActions::where('profile_id', $request->get('id'))->first()
+            ->update($input);
+
+        $updated_profile = Profile::where('id', $request->get('id'))->first()
+            ->update($input);
+
+        return response()->json($updated_profile && $updated_actions);
     }
 
     /**

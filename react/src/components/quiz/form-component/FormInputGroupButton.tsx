@@ -14,11 +14,11 @@ const FormInputGroupButton: React.FC<CheBoxProps> = ({
     options
 }) => {
     const generateSingleOptions = () => {
-        return 
+        return
     };
 
     return (
-        
+
             <Controller
                 control={control}
                 name={name}
@@ -34,19 +34,18 @@ const FormInputGroupButton: React.FC<CheBoxProps> = ({
                                             sx={{ border: ['1px', 'solid', pink[300]] }}
                                             label={option}
                                             labelPlacement="start"
-                                            onChange={onChange} 
+                                            onChange={onChange}
                                             // value={value ?? ' '}
                                         />
                                         );
                                 })}
                         </FormGroup>
                 )}
-                
+
             />
-        
+
     );
 };
 
 export default FormInputGroupButton
 
-    

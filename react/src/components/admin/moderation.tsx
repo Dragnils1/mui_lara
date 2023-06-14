@@ -7,6 +7,7 @@ import EnhancedTable from "./constituents/Table";
 const Moderation: FC = () => {
 
     const {  name, date } = useAppSelector(state => state.adminSlice)
+    const {  user } = useAppSelector(state => state.auth)
 
 
 
@@ -34,7 +35,8 @@ const Moderation: FC = () => {
         <>
             {error && <h1>oops, error, log in console {console.error(error)}</h1>}
             {isLoading && <h1>Загрузка, подождите пожалуйста</h1>}
-            {data && <EnhancedTable data={newDate ? newDate : data} nameOfTable={name} />}
+            {data && <EnhancedTable data={newDate ? newDate : data}
+                nameOfTable={name} path_with_params={`status=${user.role}`}/>}
         </>
     )
 }

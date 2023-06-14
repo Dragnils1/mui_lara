@@ -48,7 +48,7 @@ if(isset($_POST['data']))
 
 		if(isset($_FILES['o_img3']))
 		{
-			
+
 			$filename3 = DB::getFileName($_FILES['o_img3']['name']);
 			move_uploaded_file($_FILES['o_img3']['tmp_name'], '../upload/' . $filename3);
 			// wotermak('../upload/' . $filename3);
@@ -65,7 +65,7 @@ if(isset($_POST['data']))
 
 
 
-		$Data->reg_date = Date('d.m.Y');
+		$Data->created_at = Date('d.m.Y');
 
 		// if ($acc["role"] === 'adm') {
 		// 	$Data->status = '10';
@@ -77,21 +77,21 @@ if(isset($_POST['data']))
 		// 	$Data->status = '28';
 		// }
 
-		
+
 
 		$Data->pass = md5($Data->pass);
 
 		$Data->uid = md5(time() . $Data->email);
 		if ($_POST['email']) {
 			$em = $_POST['email'];
-			
+
 		} else {
 			$em = $Data->email;
 		}
 		// echo $em;
 		$sql = "users WHERE email = '$em'";
-		
-		
+
+
 		if (!empty($Data->color)) {
 			$sql = 'users SET ' .  DB::getString($Data) . "WHERE email = '$em'";
 
@@ -106,7 +106,7 @@ if(isset($_POST['data']))
 				$Data ->email = $em;
 				$Data->status = '0';
 			}
-			
+
 			$sql = 'users SET ' .  DB::getString($Data) ;
 
 			// print_r($sql);
@@ -116,7 +116,7 @@ if(isset($_POST['data']))
 			else
 				echo '[]';
 		}
-	
+
 
 		if($_POST['send'] == 1)
 		{

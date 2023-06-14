@@ -155,7 +155,7 @@ const Quiz = ({ quizRef }: { quizRef?: ((instance: unknown) => void) | React.Mut
         elementsForDelete.forEach(el => {
 
             if(dataQuiz[el]) {
-                fd.append(el, dataQuiz[el][0])
+                fd.append(el, dataQuiz[el])
             }
 
             delete newdataQuiz[el]

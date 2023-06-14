@@ -48,7 +48,7 @@ const CabinetHeader = () => {
             }
         }
     }, [open]);
-    
+
     let navigate = useNavigate();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -66,7 +66,7 @@ const CabinetHeader = () => {
         setAnchorElUser(null);
     };
 
-    
+
 
     const Logout = () => {
         deleteCookie('role');
@@ -92,6 +92,7 @@ const CabinetHeader = () => {
                                     id="scroll-dialog-description"
                                     ref={descriptionElementRef}
                                     tabIndex={-1}
+                                    component={'span'}
                                 >
                                     <Filtration />
                                 </DialogContentText>
@@ -231,7 +232,7 @@ const CabinetHeader = () => {
                                         <Typography textAlign="center">{setting}</Typography>
                                     </MenuItem>
                                 ))}
-                                
+
                             </Menu>
                         </Box>
                     </Toolbar>
@@ -239,7 +240,7 @@ const CabinetHeader = () => {
             </AppBar>
             <Outlet />
         </>
-        
+
     );
 };
 export default CabinetHeader;

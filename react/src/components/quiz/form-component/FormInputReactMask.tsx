@@ -18,34 +18,16 @@ const FormInputReactMask = ({ name, control, rules }: Omit<FormInputProps, 'labe
                 ...rules
             }}
             render={({ field }) => (
-                // <InputMask
-                //     mask="8 (999) 999-99-99"
-                //     style={{ 
-                //         width: '98%', 
-                //         height: '30px', 
-                //         border: '1px solid rgb(103 38 255)',
-                //         color: "black",
-                //     }}
-                //     placeholder="Например, 89506142432"
-                //     {...field}
-                // >
-                //     {/* {(inputProps: any) => (
-                //         <input
-                //             {...inputProps}
-                //             type="text"
-                //         />
-                //     )} */}
-                // </InputMask>
 
-                <input  {...field}  ref={ref} style={{ 
-                        width: '98%', 
-                        height: '30px', 
+                <input  {...field}  ref={ref} style={{
+                        width: '98%',
+                        height: '30px',
                         border: '1px solid rgb(103 38 255)',
                         color: "black",
                     }}
                     placeholder="Например, 89506142432"  />
             )}
-            
+
         />
 
     );

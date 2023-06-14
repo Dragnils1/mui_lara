@@ -6,7 +6,7 @@ use App\Models\Profile;
 use App\Models\ProfileActions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Session;
 
 class AuthorizationController extends Controller
 {
@@ -77,6 +77,15 @@ class AuthorizationController extends Controller
                 'auth' => 'Auth failed.',
                 ]
         ], 422);
+    }
+
+    public function logout()
+    {
+
+        Auth::logout();
+        Session::flush();
+
+        return redirect('login');
     }
 
     public function register(Request $request) {

@@ -36,7 +36,7 @@ export interface Data {
     password: string;
     visible_pass: string | null;
     phone: string;
-    reg_date: string;
+    created_at: string;
     registermonth: string;
     report: string;
     role: string | number;

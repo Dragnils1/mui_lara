@@ -21,7 +21,7 @@ import { visuallyHidden } from '@mui/utils';
 import CheckIcon from '@mui/icons-material/Check';
 import { Data } from '../../../types/data';
 import { EnhancedTableProps, EnhancedTableToolbarProps, headCells, Order, Tableprops } from '../../../types/table';
-import { useSubmitDataMutation,  useSubmitStatusMutation } from '../../../services/goroskop';
+import { useDownloadCSVFileMutation, useSubmitDataMutation,  useSubmitStatusMutation } from '../../../services/goroskop';
 import StarIcon from '@mui/icons-material/Star';
 import EditIcon from '@mui/icons-material/Edit';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
@@ -29,7 +29,7 @@ import { Link } from 'react-router-dom';
 import ArticleIcon from '@mui/icons-material/Article';
 import { Avatar, Button, TextField } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { useAppDispatch } from '../../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
@@ -39,6 +39,7 @@ import cloneDeep from 'lodash.clonedeep'
 import { restrictDate } from '../../../functions/restrictDate';
 import { getComparator } from '../../../functions/forTable';
 import T from '../../quiz/OnlyText';
+import Export from './export';
 
 
 
@@ -46,7 +47,7 @@ import T from '../../quiz/OnlyText';
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const { numSelected, nameOfTable } = props;
 
-   
+
 
     return (
         <Toolbar
@@ -149,12 +150,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         label: 'Удалить',
     }
     ]
-    
+
     return (
         <TableHead>
             <TableRow>
-                
-                
+
+
                 {HeadCells.map((headCell) => (
                     <TableCell
                         key={headCell.id + headCell.label}
@@ -182,11 +183,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     );
 }
 
-const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}) => {
-    
+const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp, path_with_params}) => {
+
     //i used deep clone for changes inside array (it was refs on value merrory, but not clone)
-    
+
     const [deepCloneData, setDeepCloneData] = React.useState(cloneDeep(data));
+    const { user} = useAppSelector(state => state.auth)
 
     const [order, setOrder] = React.useState<Order>('asc');
     const [date, setDate] = React.useState<string>(nameOfTable === 'Модерация' ?
@@ -194,52 +196,43 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
     const [orderBy, setOrderBy] = React.useState<keyof Data>("defer");
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [submitData, { }] = useSubmitDataMutation()
-    const [sendStat, {}] = useSubmitStatusMutation()
+    const [submitDataCSV] = useDownloadCSVFileMutation()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(1000);
 
-    const sendExport = (id?: string, name?: any) => {
-
-        let fD = new FormData();
-
-        id && fD.append('val', id)
-
-        switch (typeof name) {
-            case 'object':
-                fD.append('obj', name)
-                break;
-            case 'string':
-                fD.append('export', name)
-                break;
-        }
-        submitData({ name: 'export.php', data: fD })
-
-        enqueueSnackbar('Данные успешно обновлены', {
-            variant: 'success',
-        })
-    }
 
     const updateSetter = (setterName: string, value: string, id: string) => {
 
         let fD = new FormData();
 
-        fD.append('value', value)
-        fD.append('setterName', setterName)
+        fD.append(setterName, value)
         fD.append('id', id)
+        fD.append('_method', "PUT")
 
-        submitData({ name: 'setter.php', data: fD })
+        submitData({name: `dashboard/${id}`, data: fD}).then((res: any) => {
+            if(res.data) {
+                enqueueSnackbar('Данные успешно обновлены', {
+                    variant: 'success',
+                })
+            } else {
+                enqueueSnackbar('Данные не обновлены, обратитесь к Админестратору', {
+                    variant: 'warning',
+                })
+            }
+        })
     }
-    
+
 
     const sendStatus = (id: string, value: string, arr: Data[], ind: number, key?: string,) => {
 
         let fD = new FormData();
         fD.append('id', id)
         fD.append('status', value)
-        key && fD.append('key', key)
+        fD.append('_method', "PUT")
 
-        sendStat(fD)
+        submitData({name: `dashboard/${id}`, data: fD})
+        // sendStat(fD)
 
         enqueueSnackbar('Данные успешно обновлены', {
             variant: 'success',
@@ -249,19 +242,6 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
         setDeepCloneData(arr);
     }
 
-    const sendData = async (id: string, value: string, name: string) => {
-
-
-        let fD = new FormData();
-
-        fD.append('id', id)
-        fD.append('value', value)
-        submitData({ name: name, data: fD })
-
-        enqueueSnackbar('Данные успешно обновлены', {
-            variant: 'success',
-        })
-    }
 
     const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
         const selectedIndex = selected.indexOf(name);
@@ -296,10 +276,10 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
         property: keyof Data,
-    ) => {        
+    ) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);        
+        setOrderBy(property);
     };
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -320,7 +300,7 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
         setPage(0);
     };
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;    
+    const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
@@ -328,14 +308,14 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
     const memoizedRenderTable = React.useCallback(() => {
 
         return deepCloneData
-            .filter(obj => date ? (+new Date(obj['next_contact_date'] ?? '') <= +new Date(date) || 
+            .filter(obj => date ? (+new Date(obj['next_contact_date'] ?? '') <= +new Date(date) ||
                 obj['next_contact_date'] === null || obj['next_contact_date'] === '') : true)
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .sort(getComparator(order, orderBy))
             .map((row, index, thisArr) => {
 
-                const isItemSelected = isSelected(row.id);   
-                
+                const isItemSelected = isSelected(row.id);
+
                 return (
                     <TableRow
                         hover
@@ -357,15 +337,17 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
                     >
                         <TableCell
                             align="left"
-                            sx={row.defer !== '0' ? { color: 'orange' } : null}
+                            sx={String(row.defer) !== '0' ? { color: 'orange' } : null}
 
                         >
                             <CheckIcon onClick={(e) => {
-                                    const a = e.currentTarget.style.color                    
-                                    e.currentTarget.style.color = a === 'white' ? 'orange' : 'white'
+                                    // const a = e.currentTarget.style.color
+                                    // e.currentTarget.style.color = a === 'white' ? 'orange' : 'white'
                                     updateSetter('defer', +row.defer ? '0' : '1', row.id)
+
+                                    row.defer = +row.defer ? '0' : '1'
                                 }
-                            } 
+                            }
                             />
                         </TableCell>
                         <TableCell
@@ -395,10 +377,10 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
                             align="left"
                             sx={row.vip !== '0' ? { color: 'orange' } : null}
                             onClick={(e) => {
-                                const vip = +row.vip ? '0' : '1'
+                                // const vip = +row.vip ? '0' : '1'
+                                // e.currentTarget.style.color = +row.vip ? 'rgba(0, 0, 0, 0.87)' : 'orange'
+                                updateSetter('vip', +row.vip ? '0' : '1', row.id)
                                 row.vip = +row.vip ? '0' : '1'
-                                e.currentTarget.style.color = +row.vip ? 'rgba(0, 0, 0, 0.87)' : 'orange'                                
-                                updateSetter('vip', vip, row.id)
                             }}
                                 // sendStatus(row.id, +row.vip ? '0' : '1', thisArr, index, 'vip')}
                         >
@@ -436,44 +418,44 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
                             />
                         </TableCell>
                         <TableCell align="left" size='small' onClick={() => {
-                            console.log(row.next_contact_date);
 
-                            sendData(row.id, row['next_contact_date'] ?? '', 'updateNextContactData.php');
+                            updateSetter('next_contact_date', row.next_contact_date ?? '', row.id);
                         }}>
                             <CalendarTodayIcon />
                         </TableCell>
-                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, '10', thisArr, index, 'status')} >
+                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, 'admin', thisArr, index, 'status')} >
                             <AccountBoxIcon />
                         </TableCell>
-                        <TableCell align="left" size='small' sx={{ color: 'green' }} onClick={() => sendExport(row.id)} >
+                        <TableCell align="left" size='small' sx={{ color: 'green' }} onClick={() =>
+                                submitDataCSV({path: `id=${row.id}`, file_name: row.firstname})} >
                             <ArticleIcon />
                         </TableCell>
-                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, '28', thisArr, index, 'status')} >
+                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, 'consideration', thisArr, index, 'status')} >
                             <AccountBoxIcon />
                         </TableCell>
-                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, '0', thisArr, index, 'status')} >
+                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, 'main_moder', thisArr, index, 'status')} >
                             <AccountBoxIcon />
                         </TableCell>
 
-                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, restrictRole(), thisArr, index, 'status')}>
+                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, user.role, thisArr, index, 'status')}>
                             <PublishedWithChangesIcon />
                         </TableCell>
-                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, '30', thisArr, index, 'status')} >
+                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, 'archive', thisArr, index, 'status')} >
                             <AccountBoxIcon />
                         </TableCell>
                         <TableCell align="left" size='small'  >
-                            {row.status === 0 ? "Модератор" : row.status === 10 ? "Администратор" : ""}{[1, 2, 3, 4, 5, 6, 7, 8, 9].indexOf(Number(row.status)) !== -1 ? row.status : ""}
+                            {row.status  ? "Модератор" : row.status === 'admin' ? "Администратор" : ""}{[1, 2, 3, 4, 5, 6, 7, 8, 9].indexOf(Number(row.status)) !== -1 ? row.status : ""}
                         </TableCell>
                         <TableCell align="left" size='small'  >
                             инф
                         </TableCell>
-                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, '32', thisArr, index, 'status')} >
+                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, 'trash', thisArr, index, 'status')} >
                             <RestoreFromTrashIcon fontSize="medium" />
                         </TableCell>
-                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, '-2', thisArr, index, 'status')} >
+                        <TableCell align="left" size='small' onClick={() => sendStatus(row.id, 'deleted', thisArr, index, 'status')} >
                             <DeleteOutlineIcon fontSize="medium" />
                         </TableCell>
-                        <TableCell align="left">{row.reg_date}</TableCell>
+                        <TableCell align="left">{row.created_at}</TableCell>
                         <TableCell align="left">{row.last_modify}</TableCell>
                         <TableCell align="left">{row.source_type}</TableCell>
                         <TableCell align="left">{row.source}</TableCell>
@@ -486,7 +468,7 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
 
     const mem = React.useCallback(() => { return (tableRefVariable.length) }, [tableRefVariable.length])
 
-    
+
     return (
         <Box >
             <TextField
@@ -505,7 +487,7 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
                 <EnhancedTableToolbar numSelected={selected.length} nameOfTable={nameOfTable}/>
                 <TableContainer sx={{ maxHeight: '750px' }}>
                     <Table
-                        stickyHeader 
+                        stickyHeader
                         aria-label="sticky dense table"
                         aria-labelledby="tableTitle"
                         size="small"
@@ -544,14 +526,15 @@ const EnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}
                 />
             </Paper>
 
-            <Button variant="contained" size="large" onClick={() => 
+            <Export path_with_params={path_with_params ?? ''} />
+            {/* <Button variant="contained" size="large" onClick={() =>
                     sendExport(undefined, nameOfTable ? nameOfTable : 'moderation')}>
                 Экспортировать
-            </Button>
+            </Button> */}
 
-            <p>
+            {/* <p>
                 <Link to="/api/people.csv" target="_blank">Скачать файл</Link>
-            </p>
+            </p> */}
 
         </Box>
     );

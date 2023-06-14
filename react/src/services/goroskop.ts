@@ -71,6 +71,25 @@ export const goroskopAPI = createApi({
                     : [{ type: 'GET', id: 'List' }]
             }
         }),
+
+        downloadCSVFile: builder.mutation({
+            queryFn: async ({ path, file_name }, api, extraOptions, baseQuery) => {
+                const result = await baseQuery({
+                    url: `/api/export?${path}`,
+                    responseHandler: ((response) => response.blob())
+                })
+                var hiddenElement = document.createElement('a');
+                var url = window.URL || window.webkitURL;
+
+                var blobPDF = url.createObjectURL(result.data as any);
+                hiddenElement.href = blobPDF;
+                hiddenElement.target = '_blank';
+                hiddenElement.download = `${file_name}.csv`;
+                hiddenElement.click();
+                return { data: null }
+            }
+        }),
+
         submitData: builder.mutation<string | QuizType[], SubmitDataType>({
             query: ({ name, data }: SubmitDataType) => ({
                 url: `/api/${name}`,
@@ -88,7 +107,7 @@ export const goroskopAPI = createApi({
         }),
         SubmitStatus: builder.mutation<string, string | FormData>({
             query: (post) => ({
-                url: `/find_person`,
+                url: `/api/dashboard`,
                 method: 'POST',
                 body: post
             }),
@@ -116,5 +135,5 @@ export const goroskopAPI = createApi({
 
 export const { useGetApiQuery, useAuthAccountMutation,
          useSubmitDataMutation, useSubmitStatusMutation,
-         useUpdateDataMutation,
+         useUpdateDataMutation, useDownloadCSVFileMutation,
          useInitCsrfMutation, useSubmitDataWithRerenderMutation } = goroskopAPI

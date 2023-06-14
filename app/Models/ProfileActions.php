@@ -58,7 +58,7 @@ class ProfileActions extends Model
         'visible_pass',
         'status',
         'dragableColor',
-        'reg_date',
+        'created_at',
     ];
 
 

@@ -5,12 +5,13 @@ import EnhancedTable from "./constituents/Table";
 import { HeadCell } from "../../types/table";
 import { Data } from "../../types/data";
 import EnhancedTableWithSelect from "./constituents/TableWIthSelectableColumns";
+import fileDownload from "js-file-download";
 
 const Admin : FC = () => {
 
     const {path, name} = useAppSelector(state => state.adminSlice)
 
-    const { data, error, isLoading, currentData } = useGetApiQuery(`find_person?${path}`)
+    const { data, error, isLoading, currentData, isSuccess } = useGetApiQuery(`find_person?${path}`)
     const headCells: HeadCell[] = [
         {
             id: 'firstname',
@@ -30,17 +31,19 @@ const Admin : FC = () => {
         },
     ];
 
+
     let newDate = data
     //  Ну я ниче лучше не придумал
 
 
 
-    if (name === 'Активный поиск') {
-        newDate = data?.filter(elem => elem.vip == '1')
-    } else if (name === 'Пассивный поиск') {
-        newDate = data?.filter(elem => elem.vip == '0')
-    }
-    else if (name === 'Доступ') {
+    // if (name === 'Активный поиск') {
+    //     newDate = data?.filter(elem => elem.vip == '1')
+    // } else if (name === 'Пассивный поиск') {
+    //     newDate = data?.filter(elem => elem.vip == '0')
+    // }
+    // else
+    if (name === 'Доступ') {
         newDate = data?.filter(elem => {
             const keyArr: any = ['firstname', 'email', 'visible_pass', 'id']
             return (keyArr.reduce((acc: any, key: keyof Data) => {
@@ -57,9 +60,9 @@ const Admin : FC = () => {
                         {name === 'Доступ'
                          ?
                         <EnhancedTableWithSelect   data={newDate ? newDate : data} nameOfTable={name}
-                            headCellsProp={ headCells } /> :
+                            headCellsProp={ headCells } path_with_params={path} /> :
                             <EnhancedTable
-                                data={newDate ? newDate : data} nameOfTable={name}
+                                data={newDate ? newDate : data} nameOfTable={name} path_with_params={path}
                         />}
 
 

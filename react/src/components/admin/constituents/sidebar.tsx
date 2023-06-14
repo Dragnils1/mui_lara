@@ -11,13 +11,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { changePath, p } from '../../../reducers/adminSlice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 import { Button, Grid } from '@mui/material';
 import { deleteCookie, getCookie } from '../../../functions/Cookie';
-import { auth, MainState } from '../../../reducers/mainSlice';
+import { useGetApiQuery } from '../../../services/goroskop';
+import { AuthState, changeUserAndBearerToken } from '../../../reducers/authSlice';
 
 interface SidebarCells {
     name: string,
@@ -29,12 +30,16 @@ interface SidebarCells {
 const ClippedDrawer: FC = () => {
 
     const { user } = useAppSelector(state => state.auth)
+    const [logedOut, setLogedOut] = useState<boolean>(true)
+
+    const favData = useGetApiQuery('logout', {skip: logedOut})
     const dispatch = useAppDispatch()
     let navigate = useNavigate();
 
     const Logout = () => {
         deleteCookie('role');
-        dispatch(auth({} as MainState))
+        setLogedOut(!logedOut)
+        dispatch(changeUserAndBearerToken({} as Omit<AuthState, "csrfToken">))
         navigate('/', { replace: true });
     }
 

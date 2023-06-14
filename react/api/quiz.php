@@ -48,7 +48,7 @@ if(isset($_POST['data']))
 
 		if(isset($_FILES['o_img3']))
 		{
-			
+
 			$filename3 = DB::getFileName($_FILES['o_img3']['name']);
 			move_uploaded_file($_FILES['o_img3']['tmp_name'], '../upload/' . $filename3);
 			// wotermak('../upload/' . $filename3);
@@ -63,9 +63,9 @@ if(isset($_POST['data']))
 
 
 
-		$Data->reg_date = Date('d.m.Y');
+		$Data->created_at = Date('d.m.Y');
         $Data->status = '0';
-		
+
 
 		$Data->pass = md5($Data->pass);
 
@@ -97,7 +97,7 @@ if(isset($_POST['data']))
                 echo json_encode('ok update');
             else
                 echo 'fail update';
-        } 
+        }
         // else if ($Data->email !== '' && isset($_POST['email'])) {
         //     $a = $_POST['email'];
 
@@ -110,7 +110,7 @@ if(isset($_POST['data']))
         // }
 
 
-        
+
 	}
 
 	submitData($Data);

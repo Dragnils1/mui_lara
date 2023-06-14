@@ -19,6 +19,7 @@ import ZodiakDropDown from "../../quiz/zodiakDropDown";
 import { styled } from "@mui/system";
 import restrictRole from "../../../functions/restrictRole";
 import Carousel from "../../forAll/Carousel";
+import { useAppSelector } from "../../../hooks/hooks";
 
 interface ImmageArr {
     o_img1: File | string | null;
@@ -54,19 +55,21 @@ const Form = styled('form')({
     marginLeft: '25%',
 });
 
+const elementsForDelete:
+    Array<keyof  Pick<QuizType, 'o_img1' | 'o_img2' | 'o_img3' | 'o_img4'>> = ['o_img1', 'o_img2', 'o_img3', 'o_img4']
+
+
 const FormAdmin: FC<Props> = ({defaultValues}) => {
 
     const [submitData, { data, error }] = useSubmitDataWithRerenderMutation()
 
-    const imgArray = defaultValues.images.split(',')    
-    
-    
+    const imgArray = defaultValues.images.split(',')
 
     const [imageArr, setImageArr] = useState<ImmageArr>({
         o_img1: imgArray[0],
         o_img2: imgArray[1],
         o_img3: imgArray[2],
-        o_img4: imgArray[3] 
+        o_img4: imgArray[3]
     })
 
 
@@ -74,7 +77,7 @@ const FormAdmin: FC<Props> = ({defaultValues}) => {
         return (
             <img
                 key={item}
-                src={`/upload/${item}`}
+                src={`/storage/${item}`}
                 style={{ maxWidth: '45%', marginLeft: '27.5%' }}
                 alt={item}
                 loading="lazy"
@@ -82,98 +85,105 @@ const FormAdmin: FC<Props> = ({defaultValues}) => {
         )
     })
 
-    
+
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<QuizType>({
         defaultValues: defaultValues
     });
-    
+
+
 
     const onSubmit: SubmitHandler<QuizType> = data => {
-        enqueueSnackbar('Клиент успешно добавлен', {
-            variant: 'success',
-        });
+
+        // enqueueSnackbar('Клиент успешно добавлен', {
+        //     variant: 'success',
+        // });
 
         let newData = data
-
-        // if (data.o_img1.toString() === '{}') {
-        //     newData.o_img1 = imageArr.o_img1?.toString() ?? ''
-        // }
-        // if (data.o_img2.toString() === '{}') {
-        //     newData.o_img2 = imageArr.o_img2?.toString() ?? ''
-        // }
-        // if (data.o_img3.toString() === '{}') {
-        //     newData.o_img3 = imageArr.o_img3?.toString() ?? ''
-        // }
-        // if (data.o_img1.toString() === '{}') {
-        //     newData.o_img4 = imageArr.o_img4?.toString() ?? ''
-        // }
-
-        newData.images = Object.values(imageArr).join(',')
-        newData.status = data.status ?? restrictRole()
-        
         let fd = new FormData()
 
-        fd.append('data', JSON.stringify(newData))
-        console.log(fd.get('data'));
 
-        submitData({ name: 'profile_save.php', data: fd })
+        elementsForDelete.forEach(el => {
+
+            console.log(data[el]);
+
+            if(newData[el]) {
+                fd.append(el, newData[el])
+            }
+
+        })
+
+
+
+        fd.append('profile', JSON.stringify(newData))
+        fd.append("_method", "PUT");
+
+        submitData({name: `profile/${defaultValues.id}`, data: fd}).then((res: any) => {
+            if(res.data) {
+                enqueueSnackbar('Данные успешно обновлены', {
+                    variant: 'success',
+                })
+            } else {
+                enqueueSnackbar('Данные не обновлены, обратитесь к Админестратору', {
+                    variant: 'warning',
+                })
+            }
+        })
     };
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-        let fd = new FormData()
+            let fd = new FormData()
 
-        const file = e.target.files ? e.target.files[0] : 'null'
-        const fileName = e.target.files ? e.target.files[0]?.name : 'null'
-        const inputName = e.currentTarget.name
-
-        // --------- поиск старой картнки -----------
-        // Берем строку картинок пользователя, потом склеиваем, получаем массив имен картинок
-        // и берем катинку из массива по индексу. Сам индекс берем из названия инпута, так же склеиваем,
-        // переворачиваем и берем первый элемент массива и преобразуем в число, потом отнимаем единицу
-        // все легко, не правда, ли?
-        const lastNameImg = defaultValues.images.split(',')[Number(e.target.name.split('').reverse()[0]) - 1]
-
-        let newString = defaultValues.images.split(',')
-        newString[newString.indexOf(lastNameImg)] = e.target.files ? e.target.files[0]?.name : 'null'
-
-        const imageObject = { ...imageArr, [inputName]: fileName }
-        const strOfImg = (Object.values(imageObject)).join(',')
-
-        setValue(e.currentTarget.name as keyof QuizType, e.target.files ? e.target.files[0]?.name : 'null')
-        setValue('images', strOfImg)
-
-        fd.append(e.target.name, file)
-        fd.append('user_id', defaultValues.id)
-        fd.append('images', strOfImg)
-
-        submitData({ name: 'updatePhoto.php', data: fd })
-            .finally(async () => {
-                
-                setImageArr({ ...imageArr, [inputName]: fileName })
-                enqueueSnackbar('Картинка изменена', {
-                    variant: 'info',
-                });
-            })
+            const file = e.target.files ? e.target.files[0] : 'null'
+            const inputName = e.currentTarget.name
 
 
-    }
+            const strOfImg = (Object.values(imageArr)).join(',')
+
+            setValue(e.currentTarget.name as keyof QuizType, e.target.files ? e.target.files[0]?.name : 'null')
+            setValue('images', strOfImg)
+
+            fd.append(e.target.name, file)
+            fd.append('user_id', defaultValues.id)
+            fd.append('images', strOfImg)
+
+            submitData({ name: 'photo', data: fd })
+                .then((res: any) => {
+
+                    setImageArr({ ...imageArr, [inputName]: res.data[0] })
+                    enqueueSnackbar('Картинка изменена', {
+                        variant: 'info',
+                    });
+                })
+
+
+        }
+
 
     const deleteImage = (nameImg: number) => {
-        
+
+
+
         let fd = new FormData()
 
         fd.append('imgName', Object.values(imageArr)[nameImg])
 
-        submitData({ name: 'deleteFile.php', data: fd })
+        fd.append('images', (Object.values({ ...imageArr, [Object.keys(imageArr)[nameImg]]: '' })).join(','))
 
-        setImageArr({ ...imageArr, [Object.keys(imageArr)[nameImg]]: null })
+        fd.append('user_id', defaultValues.id)
+        fd.append("_method", "DELETE");
+
+        submitData({ name: `photo/${defaultValues.id}`, data: fd })
+
+        setImageArr({ ...imageArr, [Object.keys(imageArr)[nameImg]]: '' })
+
     }
 
-    
+
 
     return (
         <>
@@ -190,24 +200,44 @@ const FormAdmin: FC<Props> = ({defaultValues}) => {
 
                 <T>
                     Контрольная дата контакта
-                </T>        
+                </T>
                 <FormInputDate control={control} label='Выберите дату заполнения анкеты' name="next_contact_date" />
                 <p></p>
 
+                {/* {
+                    Object.values(imageArr).map((img, index) => (
+                        <Card sx={{ minWidth: '21%', margin: '1%', maxWidth: "23%", display: 'inline-block' }} key={index} onClick={() => deleteImage(index)}>
+                            <CardActionArea>
+                                <CardMedia
+                                    component="img"
+                                    height="140"
+                                    image={img}
+                                    alt="Фото нет"
+                                />
+                                <CardContent >
+                                    <Typography gutterBottom variant="h5" component="div" >
+                                        Delete
+                                    </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
+                    ))
+                } */}
+
                 {
-                    Object.values(imageArr).map((img, index) => 
-                        <Card sx={{ minWidth: '21%', margin: '1%', maxWidth: "23%", display: 'inline-block' }} 
+                    Object.values(imageArr).map((img, index) =>
+                        <Card sx={{ minWidth: '21%', margin: '1%', maxWidth: "23%", display: 'inline-block' }}
                             key={index} onClick={() => deleteImage(index)}>
                             <CardActionArea>
                                 <CardMedia
                                     component="img"
                                     height="140"
-                                    image={`/upload/${img}`}
+                                    image={`/storage/${img}`}
                                     alt="Фото нет"
                                 />
                                 <CardContent >
                                     <Typography gutterBottom variant="h5" component="div" >
-                                        Удалить 
+                                        Удалить
                                     </Typography>
                                 </CardContent>
                             </CardActionArea>
@@ -215,8 +245,9 @@ const FormAdmin: FC<Props> = ({defaultValues}) => {
                     )
                 }
 
+
                 <label htmlFor="contained-button-file1">
-                    <Input {...register('o_img1')} onChange={handleChange} id="contained-button-file1" type="file" />
+                    <Input {...register('o_img1')} onChange={handleChange}  id="contained-button-file1" type="file" />
                     <Button variant="contained" component="span">
                         Картинка 1
                     </Button>
@@ -304,7 +335,7 @@ const FormAdmin: FC<Props> = ({defaultValues}) => {
                 <T>
                     Дата вступления в базу
                 </T>
-                <FormInputDate control={control} label='Выберите дату заполнения анкеты' name="reg_date" />
+                <FormInputDate control={control} label='Выберите дату заполнения анкеты' name="created_at" />
 
                 <T>
                     Месяц вступления в базу
@@ -403,7 +434,7 @@ const FormAdmin: FC<Props> = ({defaultValues}) => {
                     control={control} name='gender' label="Выберите пол"
                     options={[{ value: 'М' }, { value: 'Ж' }]}
                 />
-                
+
                 <T>
                     Введите ваш вес
                 </T>
@@ -427,7 +458,7 @@ const FormAdmin: FC<Props> = ({defaultValues}) => {
                 <T>
                     Пароль
                 </T>
-                <FormInputText control={control} label='Пароль' name="pass" />
+                <FormInputText control={control} label='Пароль' name="password" />
 
                 {defaultValues?.visible_pass && (
                     <>

@@ -25,72 +25,33 @@ import useWhoIs from "../../hooks/useWhoIs";
 
 const Cabinet: FC = () => {
 
-    let { user_id } = useParams()
+    // let { user_id } = useParams()
     const { filter } = useAppSelector(state => state.cabinet)
+    const AuthSelector = useAppSelector(state => state.auth)
 
     const [submitData, profile] = useSubmitDataMutation()
-    const [submitLikedPerson, LikedPerson] = useSubmitDataMutation()
-    const profiles = useGetApiQuery('profiles.php')
-    
-    const [filterationArr, setFilterationArr] = useState<Data[]>(profiles.data ?? []);
+    // const [submitLikedPerson, LikedPerson] = useSubmitDataMutation()
+    const profiles = useGetApiQuery('find_person?role=user' + filter + '&order_by_desc=birthday')
+    // const favorites = useGetApiQuery(`find_person?role=user&id_in=${AuthSelector.user.fav}`)
+
     const [user, setUser] = useState<Data>();
     const [open, setOpen] = useState(false);
-    const whois = useWhoIs();
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const addLikedPerson = (likedPersonID: string) => {
         let fd = new FormData()
-        
-        const favArr = whois.Account.fav.split(",").slice()
+
+        const favArr = AuthSelector.user.fav.split(",").slice()
         !favArr.includes(likedPersonID) && favArr.push(likedPersonID)
         fd.append('fav', favArr.join(","))
-        fd.append('user_id', whois.Account.id ?? '')
+        fd.append('id', AuthSelector.user.id)
+        fd.append('_method', "PUT")
 
-        submitData({ name: 'cabinet/favorites.php', data: fd })
+        submitData({name: `dashboard/${AuthSelector.user.id}`, data: fd})
     }
 
- 
-    useEffect(() => {
-        let fd = new FormData()
-        fd.append('user_id', user_id ? user_id : '')
-
-        submitData({ name: 'profile.php', data: fd })
-
-    }, [user_id])
-
-    React.useLayoutEffect(() => {
-        profiles.data && ((filter) ? setFilterationArr(profiles.data?.filter(e => {
-
-            return Object.values(filter).filter(el => !!el).length === Object.values(filter).map((value, index) => {                
-                
-                if (!!value) {
-
-                    value = value.trim();
-
-                    // console.log(e, value, index);
-                    
-                    if (index === 0) {
-                        return Number(e.birthday.split('.')[2]) >= Number(value)
-                    } else if (index === 1) {                        
-                        return Number(e.birthday.split('.')[2]) <= Number(value) 
-                    }
-
-                    if (Object.values(e).indexOf(value) !== (-1)) {
-
-                        return value
-                    }
-
-                }
-
-                return undefined
-
-            }).filter(el => !!el).length
-        })
-        ) : setFilterationArr(profiles.data)) 
-        console.log(filter);
-        
-    }, [profiles.isSuccess, filter]) 
 
     return(
         <>
@@ -117,15 +78,11 @@ const Cabinet: FC = () => {
                     </Dialog>
                     : null }
                     {/* <T>Нажмите на звездочку в углу фото, что бы добавить в избранное:</T> */}
-                <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12, lg: 16 }} 
+                <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12, lg: 16 }}
                     sx={{justifyContent: 'center'}}>
-                    {profile.data && 
-                        filterationArr?.filter(elem => elem.vip === '1' && 
-                            elem.gender[0] !== ((profile?.data && typeof profile?.data !== "string") 
-                                ? profile?.data[0].gender[0] : "Ж") )
-                        .sort((a, b) => {
-                            return (new Date(a.birthday.split('.').reverse().join('-')).getTime() >= new Date(b.birthday.split('.').reverse().join('-')).getTime()) ? -1 : 1;
-                         })
+                    {profile.data &&
+                        profiles.data?.filter(elem => elem.vip === '1' &&
+                            elem.gender[0] !== (AuthSelector.user.gender[0] ?? "Ж") )
                         .map(elem => {
 
                         return (
@@ -140,7 +97,7 @@ const Cabinet: FC = () => {
                                             component="img"
                                             loading="lazy"
                                             height="140"
-                                            image={elem.images.split(',')[0] ? `/upload/${elem.images.split(',')[0]}`
+                                            image={elem.images.split(',')[0] ? process.env.BASE_PATH_FOR_IMAGES + elem.images.split(',')[0]
                                                 : '/images/noImg.jpg'}
                                             alt="Фото профиля"
                                             sx={{ '&': { objectFit: 'cover' }, minHeight: '17vh' }}
@@ -166,11 +123,11 @@ const Cabinet: FC = () => {
                     })}
                 </Grid>
                 <hr />
-                <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12, lg: 16 }} 
+                <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12, lg: 16 }}
                     sx={{ justifyContent: 'center' }}>
-                    {filterationArr?.filter(elem => elem.vip === '0' &&
+                    {profiles?.data?.filter(elem => elem.vip === '0' &&
                         elem.gender[0] !== ((profile?.data && typeof profile?.data !== "string")
-                            ? profile?.data[0].gender[0] : "Ж"))
+                            ? AuthSelector.user.gender[0] : "Ж"))
                         .sort((a, b) => {
                             return (new Date(a.birthday.split('.').reverse().join('-')).getTime() >= new Date(b.birthday.split('.').reverse().join('-')).getTime()) ? -1 : 1;
                         })
@@ -188,7 +145,7 @@ const Cabinet: FC = () => {
                                             component="img"
                                             loading="lazy"
                                             height="140"
-                                            image={elem.images.split(',')[0] ? `/upload/${elem.images.split(',')[0]}`
+                                            image={elem.images.split(',')[0] ? process.env.BASE_PATH_FOR_IMAGES + elem.images.split(',')[0]
                                                 : '/images/noImg.jpg'}
                                             alt="Фото профиля"
                                             sx={{ '&': { objectFit: 'cover' }, minHeight: '17vh' }}

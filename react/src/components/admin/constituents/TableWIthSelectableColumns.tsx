@@ -39,6 +39,7 @@ import cloneDeep from 'lodash.clonedeep'
 import { restrictDate } from '../../../functions/restrictDate';
 import { getComparator } from '../../../functions/forTable';
 import T from '../../quiz/OnlyText';
+import Export from './export';
 
 
 
@@ -46,7 +47,7 @@ import T from '../../quiz/OnlyText';
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const { numSelected, nameOfTable } = props;
 
-   
+
 
     return (
         <Toolbar
@@ -149,12 +150,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         label: 'Удалить',
     }
     ]
-    
+
     return (
         <TableHead>
             <TableRow>
-                
-                
+
+
                 {HeadCells.map((headCell) => (
                     <TableCell
                         key={headCell.id + headCell.label}
@@ -182,10 +183,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     );
 }
 
-const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp}) => {
-    
+const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, headCellsProp, path_with_params}) => {
+
     //i used deep clone for changes inside array (it was refs on value merrory, but not clone)
-    
+
     const [deepCloneData, setDeepCloneData] = React.useState(cloneDeep(data));
 
     const [order, setOrder] = React.useState<Order>('asc');
@@ -230,7 +231,7 @@ const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, head
 
         submitData({ name: 'setter.php', data: fD })
     }
-    
+
 
     const sendStatus = (id: string, value: string, arr: Data[], ind: number, key?: string,) => {
 
@@ -296,10 +297,10 @@ const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, head
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
         property: keyof Data,
-    ) => {        
+    ) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);        
+        setOrderBy(property);
     };
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -320,7 +321,7 @@ const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, head
         setPage(0);
     };
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;    
+    const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
@@ -328,14 +329,14 @@ const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, head
     const memoizedRenderTable = React.useCallback(() => {
 
         return deepCloneData
-            .filter(obj => date ? (+new Date(obj['next_contact_date'] ?? '') <= +new Date(date) || 
+            .filter(obj => date ? (+new Date(obj['next_contact_date'] ?? '') <= +new Date(date) ||
                 obj['next_contact_date'] === null || obj['next_contact_date'] === '') : true)
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .sort(getComparator(order, orderBy))
             .map((row, index, thisArr) => {
 
-                const isItemSelected = isSelected(row.id);   
-                
+                const isItemSelected = isSelected(row.id);
+
                 return (
                     <TableRow
                         hover
@@ -372,7 +373,7 @@ const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, head
 
     const mem = React.useCallback(() => { return (tableRefVariable.length) }, [tableRefVariable.length])
 
-    
+
     return (
         <Box >
             <TextField
@@ -391,7 +392,7 @@ const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, head
                 <EnhancedTableToolbar numSelected={selected.length} nameOfTable={nameOfTable}/>
                 <TableContainer sx={{ maxHeight: '750px' }}>
                     <Table
-                        stickyHeader 
+                        stickyHeader
                         aria-label="sticky dense table"
                         aria-labelledby="tableTitle"
                         size="small"
@@ -430,14 +431,16 @@ const EnhancedTableWithSelect: React.FC<Tableprops> = ({ data, nameOfTable, head
                 />
             </Paper>
 
-            <Button variant="contained" size="large" onClick={() => 
+            <Export path_with_params={path_with_params ?? ''} />
+
+            {/* <Button variant="contained" size="large" onClick={() =>
                     sendExport(undefined, nameOfTable ? nameOfTable : 'moderation')}>
                 Экспортировать
-            </Button>
+            </Button> */}
 
-            <p>
+            {/* <p>
                 <Link to="/api/people.csv" target="_blank">Скачать файл</Link>
-            </p>
+            </p> */}
 
         </Box>
     );
