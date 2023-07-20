@@ -1,9 +1,3 @@
- goroskdv.beget.tech
-goroskdv_23
-n1M&pQTZ
-
-
-переименовать поле password в бд
 
 
 
