@@ -15,3 +15,5 @@ create tests on Jest.js
 
 Фильтр:
 Сбросс фильтра
+
+// react-scripts

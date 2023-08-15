@@ -76,13 +76,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             )}
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton>
+                    <IconButton size="large">
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
             ) : (
                 <Tooltip title="Filter list">
-                    <IconButton>
+                    <IconButton size="large">
                         <FilterListIcon />
                     </IconButton>
                 </Tooltip>
@@ -180,7 +180,7 @@ const DraggableEnhancedTable: React.FC<Tableprops> = ({ data, nameOfTable, profi
 
 
     const tableRef = React.useRef<any>()
-    console.log(tableRef.current && [...tableRef.current && tableRef.current.childNodes[1].children].map((element: any) => {
+    console.log(tableRef.current && [...(tableRef.current && tableRef.current.childNodes[1].children)].map((element: any) => {
 
         return [...element.children].map((el: any) => {
 

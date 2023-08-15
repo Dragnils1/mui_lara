@@ -75,7 +75,7 @@ const Admin : FC = () => {
 
     return(
         <>
-            {error && <h1>oops, er: {error}</h1>}
+            {error && <h1>oops, er: <>{error}</></h1>}
             {isLoading && <h1>Загрузка, подождите пожалуйста</h1>}
             <MemoizedTable />
         </>

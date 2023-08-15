@@ -61,7 +61,6 @@ return new class extends Migration
             $table->string('lastlove', 255);
             $table->string('lastzodiak', 255);
             $table->string('ok', 255);
-            $table->string('registermonth', 255);
             $table->string('report', 255);
             $table->string('smoke', 255);
             $table->string('source', 255);

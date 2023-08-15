@@ -167,7 +167,7 @@ const BaseAdminers: FC<{}> = () => {
                         </Grid>
                     </Grid>
 
-                    {error && <h1>oops, er: {error}</h1>}
+                    {error && <h1>oops, er: <>{error}</></h1>}
                     {isLoading && <h1>Загрузка, подождите пожалйста</h1>}
                     <MemoizedTable />
 

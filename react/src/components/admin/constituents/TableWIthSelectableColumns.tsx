@@ -81,13 +81,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             )}
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton >
+                    <IconButton size="large">
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
             ) : (
                 <Tooltip title="Filter list">
-                    <IconButton>
+                    <IconButton size="large">
                         <FilterListIcon />
                     </IconButton>
                 </Tooltip>

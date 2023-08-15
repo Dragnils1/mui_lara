@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 
 interface dialogProps {
+    children: React.ReactNode
     mainPage?: boolean
     fullScreenDialog?: boolean
 }

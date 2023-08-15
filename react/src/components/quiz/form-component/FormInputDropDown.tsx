@@ -32,7 +32,7 @@ const FormInputDropdown: React.FC<CheBoxProps> = ({
                 render={({ field: { onChange, value } }) => {
                     
                     return (
-                        <Select onChange={onChange} value={options.some(el => {
+                        <Select onChange={onChange} value={options.some((el: Options) => {
                             return el.value === value
                         }) ? value : '' } >
                             {generateSingleOptions()}

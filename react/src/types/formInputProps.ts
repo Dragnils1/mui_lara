@@ -1,12 +1,15 @@
 import { SxProps, TextFieldProps, Theme } from "@mui/material";
 import { CSSProperties } from "react";
+import { Control } from "react-hook-form";
 
 export interface FormInputProps {
-    name: `${string}` | `${string}.${string}` | `${string}.${number}`;
-    control: any;
+    name: `${string}` | `${number}`;
+    control: Control<any>;
     label: string;
     setValue?: any;
     rules?: any;
     sx?: SxProps<Theme>
     style?: CSSProperties | undefined
 }
+
+// | `${string}.${string}`  | `${string}.${number}` 

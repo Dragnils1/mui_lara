@@ -10,7 +10,7 @@ import {
   Stack,
   Checkbox
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { styled } from '@mui/material/styles';
 import { Controller } from "react-hook-form";
 import { FormInputProps } from "../../../types/formInputProps";
 import { pink } from "@mui/material/colors";
@@ -19,35 +19,11 @@ interface CheckBoxProps extends Omit<FormInputProps, 'label'> {
     names_array: string[];
 }
 
-const useStyles = makeStyles({
-  fieldset: {
-    marginTop: "20px !important",
-    marginBottom: "5px !important",
-    width: "100%"
-  },
-  selectionheading: {
-    color: "#FFBA2C",
-    fontWeight: "600 !important",
-    fontSize: "18px !important"
-  },
-  switchcontrol: {
-    textTransform: "capitalize",
-    border: '1px, solid, rgb(103 38 255)',
-    color: 'white',
-    borderRadius: '5px',
-    backgroundColor: '#8768c8',
-    marginTop: '5px',
-    marginBottom: '5px',
-    width: 'calc(50% - 10px)'
-  }
-});
-
 const FormMultipleCheckboxList: React.FC<CheckBoxProps> = ({
     name,
     control,
     names_array,
 }) => {
-  const classes = useStyles();
 
   const [checkedState, setCheckedState] = useState(
     new Array(names_array.length).fill(false)
@@ -65,7 +41,11 @@ const FormMultipleCheckboxList: React.FC<CheckBoxProps> = ({
 
 
   return (
-    <FormControl component="fieldset" className={classes.fieldset}>
+    <FormControl component="fieldset" sx={{
+      marginTop: "20px !important",
+      marginBottom: "5px !important",
+      width: "100%"
+    }}>
 
     <Controller
         control={control}
@@ -80,7 +60,16 @@ const FormMultipleCheckboxList: React.FC<CheckBoxProps> = ({
                         return (
                             <FormControlLabel
                                 key={'form-controller' + item + index}
-                                className={classes.switchcontrol}
+                                sx={{
+                                  textTransform: "capitalize",
+                                  border: '1px, solid, rgb(103 38 255)',
+                                  color: 'white',
+                                  borderRadius: '5px',
+                                  backgroundColor: '#8768c8',
+                                  marginTop: '5px',
+                                  marginBottom: '5px',
+                                  width: 'calc(50% - 10px)'
+                                }}  
                                 labelPlacement="start"
                                 label={item}
                                 // value={item}

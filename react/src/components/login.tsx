@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider, Theme, StyledEngineProvider } from '@mui/material/styles';
 import { useAuthAccountMutation } from '../services/goroskop';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { LoginType } from '../types/login';
@@ -22,6 +22,13 @@ import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import useWhoIs from '../hooks/useWhoIs';
 import { auth, MainState } from '../reducers/mainSlice';
 import { changeBearerToken, changeUserAndBearerToken } from '../reducers/authSlice';
+
+
+// declare module '@mui/styles/defaultTheme' {
+//   // eslint-disable-next-line @typescript-eslint/no-empty-interface
+//   interface DefaultTheme extends Theme {}
+// }
+
 
 function Copyright(props: any) {
     return (
@@ -125,55 +132,56 @@ export default function Login() {
 
 
     return (
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
 
-        <ThemeProvider theme={theme}>
-
-            <Container component="main" maxWidth="xs">
-                <CssBaseline />
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }} src='/images/logoChar.png' />
-                    <Typography component="h1" variant="h5">
-                        Войти
-                    </Typography>
-                    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
-                        <Email control={control} rules={{ autoComplete: 'email', autoFocus: true}} />
-                        <Pass control={control} />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Запомнить меня"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline />
+                    <Box
+                        sx={{
+                            marginTop: 8,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }} src='/images/logoChar.png' />
+                        <Typography component="h1" variant="h5">
                             Войти
-                        </Button>
-                        <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2">
-                                    Забыли пороль?
-                                </Link>
+                        </Typography>
+                        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
+                            <Email control={control} rules={{ autoComplete: 'email', autoFocus: true}} />
+                            <Pass control={control} />
+                            <FormControlLabel
+                                control={<Checkbox value="remember" color="primary" />}
+                                label="Запомнить меня"
+                            />
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Войти
+                            </Button>
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                        Забыли пороль?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link href="#" variant="body2">
+                                        {"Регистрация!"}
+                                    </Link>
+                                </Grid>
                             </Grid>
-                            <Grid item>
-                                <Link href="#" variant="body2">
-                                    {"Регистрация!"}
-                                </Link>
-                            </Grid>
-                        </Grid>
+                        </Box>
                     </Box>
-                </Box>
-                <Copyright sx={{ mt: 8, mb: 4 }} />
-            </Container>
+                    <Copyright sx={{ mt: 8, mb: 4 }} />
+                </Container>
 
-        </ThemeProvider>
+            </ThemeProvider>
+        </StyledEngineProvider>
     );
 }

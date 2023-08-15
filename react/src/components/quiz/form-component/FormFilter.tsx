@@ -10,7 +10,6 @@ import {
   Stack,
   Checkbox
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { FormInputProps } from "../../../types/formInputProps";
 
 
@@ -19,26 +18,7 @@ interface CheckBoxProps extends Omit<FormInputProps, 'label'> {
     label: string
 }
 
-const useStyles = makeStyles({
-  fieldset: {
-    paddingLeft: "20px !important",
-    paddingTop: "20px !important",
-    paddingBottom: "20px !important",
-    width: "100%"
-  },
-  formgroup: {
-    marginTop: 25
-  },
-  selectionheading: {
-    color: "#FFBA2C",
-    fontWeight: "600 !important",
-    fontSize: "18px !important"
-  },
-  switchcontrol: {
-    marginLeft: "0 !important",
-    textTransform: "capitalize"
-  }
-});
+
 
 const Filter: React.FC<CheckBoxProps> = ({
     name,
@@ -46,7 +26,6 @@ const Filter: React.FC<CheckBoxProps> = ({
     names_array,
     label
 }) => {
-  const classes = useStyles();
 
   const [active, setActive] = useState(false);
   const [checkedState, setCheckedState] = useState(
@@ -78,12 +57,21 @@ const Filter: React.FC<CheckBoxProps> = ({
   };
 
   return (
-    <FormControl component="fieldset" className={classes.fieldset}>
-      <FormGroup className={classes.formgroup}>
+    <FormControl component="fieldset" sx={{
+      paddingLeft: "20px !important",
+    paddingTop: "20px !important",
+    paddingBottom: "20px !important",
+    width: "100%"
+    }}>
+      <FormGroup sx={{marginTop: 25}}>
         <FormLabel component="fieldset">
           <Grid container direction="row" spacing={3} alignItems="center">
             <Grid item>
-              <Typography variant="h5" className={classes.selectionheading}>
+              <Typography variant="h5" sx={{
+                color: "#FFBA2C",
+                fontWeight: "600 !important",
+                fontSize: "18px !important"
+              }}>
                 {label}
               </Typography>
             </Grid>
@@ -102,7 +90,10 @@ const Filter: React.FC<CheckBoxProps> = ({
             return (
               <Grid item sm={4} md={3} key={index}>
                 <FormControlLabel
-                  className={classes.switchcontrol}
+                  sx={{
+                    marginLeft: "0 !important",
+    textTransform: "capitalize"
+                  }}    
                   control={
                     <Checkbox
                       size="small"

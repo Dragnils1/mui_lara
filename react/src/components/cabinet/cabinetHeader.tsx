@@ -74,173 +74,170 @@ const CabinetHeader = () => {
         navigate('/', { replace: true });
     }
 
-    return (
-        <>
-            <AppBar position="static" sx={{ marginBottom: '3vh' }}>
-                <Container maxWidth="xl">
-                    <Toolbar disableGutters>
-                        <Dialog
-                            open={open}
-                            onClose={handleClose}
-                            scroll={scroll}
-                            aria-labelledby="scroll-dialog-title"
-                            aria-describedby="scroll-dialog-description"
+    return <>
+        <AppBar position="static" sx={{ marginBottom: '3vh' }}>
+            <Container maxWidth="xl">
+                <Toolbar disableGutters>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        scroll={scroll}
+                        aria-labelledby="scroll-dialog-title"
+                        aria-describedby="scroll-dialog-description"
+                    >
+                        <DialogTitle id="scroll-dialog-title">Настройки</DialogTitle>
+                        <DialogContent dividers={scroll === 'paper'}>
+                            <DialogContentText
+                                id="scroll-dialog-description"
+                                ref={descriptionElementRef}
+                                tabIndex={-1}
+                                component={'span'}
+                            >
+                                <Filtration />
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Закрыть</Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Avatar variant="square" sx={{'&': {width: 'auto'}, marginRight: '10px'}}  src='/images/logo.png' />
+                    <Typography
+                        variant="h6"
+                        noWrap
+                        component="a"
+                        href="/"
+                        sx={{
+                            mr: 2,
+                            display: { xs: 'none', md: 'flex' },
+                            fontFamily: 'monospace',
+                            fontWeight: 700,
+                            letterSpacing: '.3rem',
+                            color: 'inherit',
+                            textDecoration: 'none',
+                        }}
+                    >
+                        SVAT-ASTROLOG
+                    </Typography>
+
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleOpenNavMenu}
+                            color="inherit"
                         >
-                            <DialogTitle id="scroll-dialog-title">Настройки</DialogTitle>
-                            <DialogContent dividers={scroll === 'paper'}>
-                                <DialogContentText
-                                    id="scroll-dialog-description"
-                                    ref={descriptionElementRef}
-                                    tabIndex={-1}
-                                    component={'span'}
-                                >
-                                    <Filtration />
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleClose}>Закрыть</Button>
-                            </DialogActions>
-                        </Dialog>
-                        <Avatar variant="square" sx={{'&': {width: 'auto'}, marginRight: '10px'}}  src='/images/logo.png' />
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            component="a"
-                            href="/"
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorElNav}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            open={Boolean(anchorElNav)}
+                            onClose={handleCloseNavMenu}
                             sx={{
-                                mr: 2,
-                                display: { xs: 'none', md: 'flex' },
-                                fontFamily: 'monospace',
-                                fontWeight: 700,
-                                letterSpacing: '.3rem',
-                                color: 'inherit',
-                                textDecoration: 'none',
+                                display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            SVAT-ASTROLOG
-                        </Typography>
-
-                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                            <IconButton
-                                size="large"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleOpenNavMenu}
-                                color="inherit"
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                            <Menu
-                                id="menu-appbar"
-                                anchorEl={anchorElNav}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'left',
-                                }}
-                                open={Boolean(anchorElNav)}
-                                onClose={handleCloseNavMenu}
-                                sx={{
-                                    display: { xs: 'block', md: 'none' },
-                                }}
-                            >
-                                {pages.map((page) => (
-                                    <MenuItem key={page.link} onClick={handleCloseNavMenu}>
-                                        <Typography textAlign="center">
-                                            <Link style={{ textDecoration: 'none', color: "white" }}
-                                                to={page.link}>{page.name}
-                                            </Link>
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
-
-                                <MenuItem onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center" >
-                                        <Button variant="text" onClick={handleOpen}>
-                                            Настрйоки
-                                        </Button>
+                            {pages.map((page) => (
+                                <MenuItem key={page.link} onClick={handleCloseNavMenu}>
+                                    <Typography textAlign="center">
+                                        <Link style={{ textDecoration: 'none', color: "white" }}
+                                            to={page.link}>{page.name}
+                                        </Link>
                                     </Typography>
                                 </MenuItem>
-                            </Menu>
-                        </Box>
-                        {/* <Avatar variant="rounded" src='/images/logo.png' /> */}
-                        <Typography
-                            variant="h5"
-                            noWrap
-                            component="a"
-                            href=""
-                            sx={{
-                                mr: 2,
-                                display: { xs: 'flex', md: 'none' },
-                                flexGrow: 1,
-                                fontFamily: 'monospace',
-                                fontWeight: 700,
-                                letterSpacing: '.3rem',
-                                color: 'inherit',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            SVAT-ASTROLOG
-                        </Typography>
-                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                            {pages.map((page) => (
-                                <Button
-                                    key={page.link}
-                                    onClick={handleCloseNavMenu}
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
-                                >
-                                    <Link style={{ textDecoration: 'none', color: "white" }} to={page.link}>{page.name}</Link>
-                                </Button>
                             ))}
+
+                            <MenuItem onClick={handleCloseNavMenu}>
+                                <Typography textAlign="center" >
+                                    <Button variant="text" onClick={handleOpen}>
+                                        Настрйоки
+                                    </Button>
+                                </Typography>
+                            </MenuItem>
+                        </Menu>
+                    </Box>
+                    {/* <Avatar variant="rounded" src='/images/logo.png' /> */}
+                    <Typography
+                        variant="h5"
+                        noWrap
+                        component="a"
+                        href=""
+                        sx={{
+                            mr: 2,
+                            display: { xs: 'flex', md: 'none' },
+                            flexGrow: 1,
+                            fontFamily: 'monospace',
+                            fontWeight: 700,
+                            letterSpacing: '.3rem',
+                            color: 'inherit',
+                            textDecoration: 'none',
+                        }}
+                    >
+                        SVAT-ASTROLOG
+                    </Typography>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                        {pages.map((page) => (
                             <Button
-                                onClick={handleOpen}
+                                key={page.link}
+                                onClick={handleCloseNavMenu}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
-                                Настрйоки
+                                <Link style={{ textDecoration: 'none', color: "white" }} to={page.link}>{page.name}</Link>
                             </Button>
-                        </Box>
+                        ))}
+                        <Button
+                            onClick={handleOpen}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                        >
+                            Настрйоки
+                        </Button>
+                    </Box>
 
-                        <Box sx={{ flexGrow: 0 }}>
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                sx={{ mt: '45px' }}
-                                id="menu-appbar"
-                                anchorEl={anchorElUser}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}
-                            >
-                                {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={Logout}>
-                                        <Typography textAlign="center">{setting}</Typography>
-                                    </MenuItem>
-                                ))}
+                    <Box sx={{ flexGrow: 0 }}>
+                        <Tooltip title="Open settings">
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }} size="large">
+                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            sx={{ mt: '45px' }}
+                            id="menu-appbar"
+                            anchorEl={anchorElUser}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorElUser)}
+                            onClose={handleCloseUserMenu}
+                        >
+                            {settings.map((setting) => (
+                                <MenuItem key={setting} onClick={Logout}>
+                                    <Typography textAlign="center">{setting}</Typography>
+                                </MenuItem>
+                            ))}
 
-                            </Menu>
-                        </Box>
-                    </Toolbar>
-                </Container>
-            </AppBar>
-            <Outlet />
-        </>
-
-    );
+                        </Menu>
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
+        <Outlet />
+    </>;
 };
 export default CabinetHeader;

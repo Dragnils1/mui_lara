@@ -33,7 +33,7 @@ const Moderation: FC = () => {
 
     return (
         <>
-            {error && <h1>oops, error, log in console {console.error(error)}</h1>}
+            {error && <h1>oops, error, log in console <>{console.error(error)}</></h1>}
             {isLoading && <h1>Загрузка, подождите пожалуйста</h1>}
             {data && <EnhancedTable data={newDate ? newDate : data}
                 nameOfTable={name} path_with_params={`status=${user.role}`}/>}
