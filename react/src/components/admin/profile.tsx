@@ -9,6 +9,7 @@ import FormAdmin from "./constituents/formAdmin";
 import SendStatusButton from "./constituents/sendStatusButton";
 import EnhancedTable from "./constituents/Table";
 import { QuizType } from "../../types/quiz";
+import ReactTable from "./constituents/ReactTable";
 
 
 const Profile: FC = () => {
@@ -49,7 +50,7 @@ const Profile: FC = () => {
                 <>
                     <SendStatusButton />
                     <ScrollDialog fullScreenDialog>
-                        <h1>sad</h1>
+                        <ReactTable />
                     </ScrollDialog>
                     <FormAdmin defaultValues={FormDefaultValues} />
                     {newData.length > 1 ? (
