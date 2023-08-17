@@ -1,0 +1,8 @@
+export type Filter = {
+    id: string
+    filter_name: string 
+    filter_type: string 
+    default_value: string 
+    created_at: string
+    updated_at: string
+}

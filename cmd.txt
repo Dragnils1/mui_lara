@@ -3,3 +3,5 @@ php artisan migrate
 php artisan migrate:status
 
 php artisan db:seed
+
+INSERT INTO `filters`(`id`, `filter_name`, `filter_type`, `default_value`) VALUES (1,'От какого числа','text','')

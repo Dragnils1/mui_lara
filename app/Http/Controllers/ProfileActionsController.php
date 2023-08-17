@@ -61,10 +61,11 @@ class ProfileActionsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update($profile, string $id)
+    public function update(Request $request, string $id)
     {
+        // dd($id);
         $updated = ProfileActions::where('profile_id', $id)
-            ->update($profile);
+            ->update(["filters" => $request->data[0]]);
 
 
         return response()->json([

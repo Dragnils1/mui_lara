@@ -7,10 +7,12 @@ let XSRFcookie = getCookie('XSRF-TOKEN');
 let bearerCookie = localStorage.getItem('bearer-TOKEN');
 let user: Person = JSON.parse(localStorage.getItem('user') ?? '{}');
 
+
+
 export const checkAuth = createAsyncThunk(
 'auth/checkAuth',
 async () => {
-    const response = await axios.post('/api/checkAuth', {
+    const response = await axios.post('/checkAuth', {
         headers: {
             'authorization': `Bearer ${initialState.bearerToken}`,
             'X-XSRF-TOKEN': initialState.csrfToken,
@@ -36,6 +38,13 @@ const initialState = {
     bearerToken: bearerCookie,
     user: user
 } as AuthState
+
+axios.defaults.baseURL = '/api';
+axios.defaults.headers.common['Authorization'] = `Bearer ${initialState.bearerToken}`;
+axios.defaults.headers.common['X-XSRF-TOKEN'] = initialState.csrfToken;
+axios.defaults.headers.common['Accept'] = 'application/json, text/plain, */*';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.post['X-Requested-With'] = 'XMLHttpRequest';
 
 const authSlice = createSlice({
     name: 'auth',

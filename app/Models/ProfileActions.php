@@ -61,5 +61,10 @@ class ProfileActions extends Model
         'created_at',
     ];
 
+    protected $casts = [
+        'filters' => 'array'
+        // => 'object'
+    ];
+
 
 }

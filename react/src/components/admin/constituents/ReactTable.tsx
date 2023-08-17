@@ -7,60 +7,27 @@ import {
     getCoreRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { Button, Checkbox, FormControlLabel, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import { useParams } from 'react-router-dom'
+import { Filter } from '../../../types/filter'
 
-type Person = {
-    firstName: string
-    lastName: string
-    age: number
-    visits: number
-    status: string
-    progress: number
-}
 
-const defaultData: Person[] = [
-    {
-        firstName: 'tanner',
-        lastName: 'linsley',
-        age: 24,
-        visits: 100,
-        status: 'In Relationship',
-        progress: 50,
-    },
-    {
-        firstName: 'tandy',
-        lastName: 'miller',
-        age: 40,
-        visits: 40,
-        status: 'Single',
-        progress: 80,
-    },
-    {
-        firstName: 'joe',
-        lastName: 'dirte',
-        age: 45,
-        visits: 20,
-        status: 'Complicated',
-        progress: 10,
-    },
-]
 
-const selectInput = (filterName: string) => {
-    switch (filterName){
+const selectInput = (filterName: string, defaultValue: string) => {
+    switch (filterName) {
         case 'date':
             return <TextField
-            label='Выберите дату'
-            type="date"
-            sx={{ width: 220 }}
-            InputLabelProps={{
-                shrink: true,
-            }}
-        />
+                label='Выберите дату'
+                type="date"
+                sx={{ width: 220 }}
+                InputLabelProps={{
+                    shrink: true,
+                }}
+            />
         case 'range':
             return <> dsa</>
         case 'zodiak':
-            return 
+            return
 
         default:
             return <TextField
@@ -70,76 +37,71 @@ const selectInput = (filterName: string) => {
                 InputLabelProps={{
                     shrink: true,
                 }}
+                value={defaultValue ?? 'no value'}
             />
     }
-        
+
 }
 
-const columnHelper = createColumnHelper<Person>()
+const columnHelper = createColumnHelper<Filter>()
 
-const columns = [
-    // columnHelper.accessor('firstName', {
-    //     cell: info => info.getValue(),
-    //     footer: info => info.column.id,
-    // }),
-    // columnHelper.accessor(row => row.lastName, {
-    //     id: 'lastName',
-    //     cell: info => <i>{info.getValue()}</i>,
-    //     header: () => <span>Last Name</span>,
-    //     footer: info => info.column.id,
-    // }),
-    // columnHelper.accessor('age', {
-    //     header: () => 'Age',
-    //     cell: info => info.renderValue(),
-    //     footer: info => info.column.id,
-    // }),
-    
-    columnHelper.accessor('status', {
+const columns  = [
+
+
+    columnHelper.accessor('filter_name', {
         header: 'Название фильтра',
-        
-        footer: info => info.column.id,
-    }),
-    columnHelper.accessor('visits', {
-        header: ({ table }) => <Checkbox
-        color="primary"
-        checked={table.getIsAllRowsSelected()}
-        onChange={table.getToggleAllRowsSelectedHandler()}
-    />,
-        cell: ({ row }) => <Checkbox
-        color="primary"
-        checked={row.getIsSelected()}
-        onChange={row.getToggleSelectedHandler()}
-    />,
-        footer: info => info.column.id,
-    }),
-    columnHelper.accessor('progress', {
-        header: 'Значение по умолчанию',
-        cell: info => selectInput('text'),
-        footer: info => info.column.id,
-    }),
-]
 
-const ReactTable = () => {
+        footer: info => info.column.id,
+    }),
+    columnHelper.accessor('created_at', {
+        header: ({ table }) =>
+            <>
+                <Checkbox
+                    color="primary"
+                    checked={table.getIsAllRowsSelected()}
+                    onChange={table.getToggleAllRowsSelectedHandler()}
+                />
+                <span>Добавить фильтр</span>
+            </>,
+        cell: ({ row }) =>
+            <Checkbox
+                color="primary"
+                checked={row.getIsSelected()}
+                onChange={row.getToggleSelectedHandler()}
+            />,
+        footer: info => info.column.id,
+    }),
+    columnHelper.accessor('updated_at', {
+        header: ({ table }) =>
+            <>
+                
+                <span>Только для чтения</span>
+            </>,
+        cell: ({ row }) => <FormControlLabel control={<Switch defaultChecked />} label="Да" />,
+        footer: info => info.column.id,
+    }),
+    columnHelper.accessor('default_value', {
+        header: 'Значение по умолчанию',
+        cell: ({ row }) => selectInput(row.getValue('filter_type'), row.getValue('default_value')),
+        footer: info => info.column.id,
+    }),
+] 
+
+interface tableProps {
+    filterData: Filter[]
+    children?: React.ReactNode
+}
+
+const ReactTable = ({ filterData }: tableProps) => {
+
+    
+
 
     let { user_id } = useParams()
 
-    const [data, setData] = React.useState(() => [...defaultData])
+    const [data, setData] = React.useState(() => [...filterData])
     const [rowSelection, setRowSelection] = React.useState({})
 
-    const [selectedRowIds, setSelectedRowIds] = React.useState({});
-    const selected_rows = Object.keys(rowSelection).map((key) => {
-        return data[Number(key)]
-    });
-
-    let ob: Record<string, string> = {}
-
-    selected_rows.map(row => {
-        ob[row.firstName] = row.firstName
-    })
-
-    console.log(ob)
-    
-    
 
     const table = useReactTable({
         data,
@@ -151,17 +113,26 @@ const ReactTable = () => {
         },
     })
 
-    // const sendData = (data: object) => {
-    //     axios.post('profile_filters_add_new_field', {
-    //         data: {
-    //             if(data.map(row => {
-    //                 if(row.checked) {
-    //                     send_data.add(row.name: row.value)
-    //                 }
-    //             }))
-    //         }
-    //     })
-    // }
+    const [selectedRowIds, setSelectedRowIds] = React.useState({});
+    const selected_rows = table.getSelectedRowModel().flatRows.map((row) => {
+        // readonly: row.original.updated_at что бы не париться с типами 
+        return {...row.original, readonly: row.original.updated_at}
+    });
+
+    // let ob: Record<string, string> = {}
+
+    // selected_rows.map(row => {
+    //     ob[row.firstName] = row.firstName
+    // })
+
+    console.log(selected_rows)
+
+    const sendData = (send_data: Filter[]) => {
+        axios.post(`/profile_actions/${user_id}`, {
+            data: send_data,
+            _method: 'PUT',
+        })
+    }
 
     return (
         <div className="p-2">
@@ -201,6 +172,8 @@ const ReactTable = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Button onClick={() => sendData(selected_rows)} variant="contained">Сохранить фильтры</Button>
 
             <pre>{JSON.stringify(table.getState(), null, 2)}</pre>
 

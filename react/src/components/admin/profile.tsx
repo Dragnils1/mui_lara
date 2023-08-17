@@ -10,6 +10,7 @@ import SendStatusButton from "./constituents/sendStatusButton";
 import EnhancedTable from "./constituents/Table";
 import { QuizType } from "../../types/quiz";
 import ReactTable from "./constituents/ReactTable";
+import { Filter } from "../../types/filter";
 
 
 const Profile: FC = () => {
@@ -21,6 +22,7 @@ const Profile: FC = () => {
 
     // const [submitData, { data, error, isLoading }] = useSubmitDataMutation()
     const { data, error, isLoading, isSuccess, currentData } = useGetApiQuery(`profile/${user_id}`)
+    const filtersData = useGetApiQuery(`filter`)
     const favData = useGetApiQuery(`find_person?id_in=${fav}`, {skip: !fav.length})
 
     let deepCloneData = (favData.data && typeof favData.data !== 'string') ? cloneDeep(favData.data) : []
@@ -49,9 +51,9 @@ const Profile: FC = () => {
             {FormDefaultValues && (
                 <>
                     <SendStatusButton />
-                    <ScrollDialog fullScreenDialog>
-                        <ReactTable />
-                    </ScrollDialog>
+                    {filtersData.data && <ScrollDialog fullScreenDialog>
+                        <ReactTable filterData={(filtersData.data as unknown) as Filter[] } />
+                    </ScrollDialog>}
                     <FormAdmin defaultValues={FormDefaultValues} />
                     {newData.length > 1 ? (
                         <ScrollDialog fullScreenDialog>

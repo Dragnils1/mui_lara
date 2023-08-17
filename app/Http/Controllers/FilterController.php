@@ -14,7 +14,7 @@ class FilterController extends Controller
     {
         $filter = Filter::all();
 
-        return response()->json($profile);
+        return response()->json($filter);
     }
 
     /**
@@ -32,7 +32,7 @@ class FilterController extends Controller
     {
         $filter = Filter::where('id', $id)->get()->toArray();
 
-        return response()->json($profile);
+        return response()->json($filter);
     }
 
     /**
