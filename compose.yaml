@@ -1,0 +1,65 @@
+version: "3.8"
+services:
+
+  frontend:
+    build: 
+      context: ./react
+    ports:
+      - "3000:3000"
+    networks:
+      - mui-lara-network
+
+  backend:
+    build:
+      context: ./laravel
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    working_dir: /var/www
+    volumes:
+        - ./laravel:/var/www
+    ports:
+      - "8000:8000"
+    networks:
+      - mui-lara-network
+      - db
+
+  appdb:
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+    ports:
+      - ${DB_PORT}:3306
+    networks:
+      - db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: appdb
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - appdb
+    ports:
+      - ${PHPMYADMIN_PORT}:80
+    networks:
+      - db
+
+networks:
+  mui-lara-network:
+    driver: bridge
+  db:
+
+
+  
