@@ -139,7 +139,7 @@ class ProfileController extends Controller
     public function show(string $id)
     {
 
-        $profile = Profile::where('id', $id)->get()->toArray();
+        $profile = Profile::where('id', $id)->union(ProfileActions::class)->get()->toArray();
 
         return response()->json($profile);
     }

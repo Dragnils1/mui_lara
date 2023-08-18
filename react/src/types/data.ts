@@ -54,5 +54,6 @@ export interface Data {
     weight: string | number;
     year: string | number;
     zodiak: string;
-    dragableColor: string | null
+    dragableColor: string | null;
+    filters: string | null
 }

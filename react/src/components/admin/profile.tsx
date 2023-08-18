@@ -1,5 +1,5 @@
 import cloneDeep from "lodash.clonedeep";
-import { FC, useEffect, useState } from "react"
+import { FC, useCallback, useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import useWhoIs from "../../hooks/useWhoIs";
 import { useGetApiQuery, useSubmitDataMutation } from "../../services/goroskop"
@@ -10,7 +10,8 @@ import SendStatusButton from "./constituents/sendStatusButton";
 import EnhancedTable from "./constituents/Table";
 import { QuizType } from "../../types/quiz";
 import ReactTable from "./constituents/ReactTable";
-import { Filter } from "../../types/filter";
+import { FilterColumns } from "../../types/filter";
+import { Data } from "../../types/data";
 
 
 const Profile: FC = () => {
@@ -23,7 +24,7 @@ const Profile: FC = () => {
     // const [submitData, { data, error, isLoading }] = useSubmitDataMutation()
     const { data, error, isLoading, isSuccess, currentData } = useGetApiQuery(`profile/${user_id}`)
     const filtersData = useGetApiQuery(`filter`)
-    const favData = useGetApiQuery(`find_person?id_in=${fav}`, {skip: !fav.length})
+    const favData = useGetApiQuery(`find_person?id_in=${fav}`, { skip: !fav.length })
 
     let deepCloneData = (favData.data && typeof favData.data !== 'string') ? cloneDeep(favData.data) : []
 
@@ -36,6 +37,24 @@ const Profile: FC = () => {
 
     let FormDefaultValues = data ? (typeof data[0] != 'string' ? data[0] as QuizType : false) : false
 
+    const mergeFilterData = useCallback((filtersData: FilterColumns[], userFiltersData: string | null) => {
+        if (userFiltersData) {
+            return filtersData.map((filter) => {
+                return JSON.parse(userFiltersData).map((userFilter: any) => {
+                    if (filter.id === userFilter.filters) {
+                        return userFilter
+                    }
+                    return filter
+                })[0]
+            })
+        } else {
+            return filtersData
+        }
+
+    }, [filtersData.data, data])
+
+    data && filtersData.data && console.log(mergeFilterData((filtersData.data as unknown) as FilterColumns[],  data[0].filters));
+    
 
     useEffect(() => {
 
@@ -52,14 +71,14 @@ const Profile: FC = () => {
                 <>
                     <SendStatusButton />
                     {filtersData.data && <ScrollDialog fullScreenDialog>
-                        <ReactTable filterData={(filtersData.data as unknown) as Filter[] } />
+                        <ReactTable filterData={(filtersData.data as unknown) as FilterColumns[]} />
                     </ScrollDialog>}
                     <FormAdmin defaultValues={FormDefaultValues} />
                     {newData.length > 1 ? (
                         <ScrollDialog fullScreenDialog>
                             <DraggableEnhancedTable data={newData} nameOfTable={'Избранные'} profile={FormDefaultValues} />
                         </ScrollDialog>
-                    ) : <h2>У этого пользователя нет избранных</h2> }
+                    ) : <h2>У этого пользователя нет избранных</h2>}
 
                 </>
             )}

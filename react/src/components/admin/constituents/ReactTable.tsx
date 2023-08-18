@@ -9,9 +9,14 @@ import {
 } from '@tanstack/react-table'
 import { Button, Checkbox, FormControlLabel, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import { useParams } from 'react-router-dom'
-import { Filter } from '../../../types/filter'
+import {  FilterColumns } from '../../../types/filter'
 
 
+
+interface tableProps {
+    filterData: FilterColumns[]
+    children?: React.ReactNode
+}
 
 const selectInput = (filterName: string, defaultValue: string) => {
     switch (filterName) {
@@ -43,7 +48,7 @@ const selectInput = (filterName: string, defaultValue: string) => {
 
 }
 
-const columnHelper = createColumnHelper<Filter>()
+const columnHelper = createColumnHelper<FilterColumns>()
 
 const columns  = [
 
@@ -53,7 +58,7 @@ const columns  = [
 
         footer: info => info.column.id,
     }),
-    columnHelper.accessor('created_at', {
+    columnHelper.accessor('readonly', {
         header: ({ table }) =>
             <>
                 <Checkbox
@@ -87,10 +92,7 @@ const columns  = [
     }),
 ] 
 
-interface tableProps {
-    filterData: Filter[]
-    children?: React.ReactNode
-}
+
 
 const ReactTable = ({ filterData }: tableProps) => {
 
@@ -114,12 +116,12 @@ const ReactTable = ({ filterData }: tableProps) => {
     })
 
     const [selectedRowIds, setSelectedRowIds] = React.useState({});
-    const selected_rows = table.getSelectedRowModel().flatRows.map((row) => {
+    const selected_rows: FilterColumns[] = table.getSelectedRowModel().flatRows.map((row) => {
         // readonly: row.original.updated_at что бы не париться с типами 
-        return {...row.original, readonly: row.original.updated_at}
+        return row.original
     });
 
-    // let ob: Record<string, string> = {}
+    // аlet ob: Record<string, string> = {}
 
     // selected_rows.map(row => {
     //     ob[row.firstName] = row.firstName
@@ -127,7 +129,7 @@ const ReactTable = ({ filterData }: tableProps) => {
 
     console.log(selected_rows)
 
-    const sendData = (send_data: Filter[]) => {
+    const sendData = (send_data: FilterColumns[]) => {
         axios.post(`/profile_actions/${user_id}`, {
             data: send_data,
             _method: 'PUT',

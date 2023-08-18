@@ -65,7 +65,7 @@ class ProfileActionsController extends Controller
     {
         // dd($id);
         $updated = ProfileActions::where('profile_id', $id)
-            ->update(["filters" => $request->data[0]]);
+            ->update(["filters" => $request->data]);
 
 
         return response()->json([

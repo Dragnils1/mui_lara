@@ -28,7 +28,7 @@ class FilterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Filter $filter)
+    public function show(string $id)
     {
         $filter = Filter::where('id', $id)->get()->toArray();
 
