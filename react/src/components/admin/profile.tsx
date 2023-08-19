@@ -20,8 +20,6 @@ const Profile: FC = () => {
 
     const [fav, setFav] = useState<any>('')
 
-
-    // const [submitData, { data, error, isLoading }] = useSubmitDataMutation()
     const { data, error, isLoading, isSuccess, currentData } = useGetApiQuery(`profile/${user_id}`)
     const filtersData = useGetApiQuery(`filter`)
     const favData = useGetApiQuery(`find_person?id_in=${fav}`, { skip: !fav.length })
@@ -37,16 +35,25 @@ const Profile: FC = () => {
 
     let FormDefaultValues = data ? (typeof data[0] != 'string' ? data[0] as QuizType : false) : false
 
+
     const mergeFilterData = useCallback((filtersData: FilterColumns[], userFiltersData: string | null) => {
         if (userFiltersData) {
-            return filtersData.map((filter) => {
-                return JSON.parse(userFiltersData).map((userFilter: any) => {
-                    if (filter.id === userFilter.filters) {
-                        return userFilter
-                    }
-                    return filter
-                })[0]
+
+            const userFiltersArr = JSON.parse(userFiltersData)
+
+            const userFilterIds =  userFiltersArr.map((userFilter: any) => {
+                return Number(userFilter.id) - 1
             })
+                 
+            return filtersData.map((filter) => {
+                const filter_id = Number(filter.id) - 1
+
+                if(filter_id in userFilterIds) {
+                    return userFiltersArr[filter_id]               
+                }
+                return filter
+            })
+            
         } else {
             return filtersData
         }
@@ -70,8 +77,8 @@ const Profile: FC = () => {
             {FormDefaultValues && (
                 <>
                     <SendStatusButton />
-                    {filtersData.data && <ScrollDialog fullScreenDialog>
-                        <ReactTable filterData={(filtersData.data as unknown) as FilterColumns[]} />
+                    {filtersData.data && data && <ScrollDialog fullScreenDialog>
+                        <ReactTable filterData={mergeFilterData((filtersData.data as unknown) as FilterColumns[],  data[0].filters)} />
                     </ScrollDialog>}
                     <FormAdmin defaultValues={FormDefaultValues} />
                     {newData.length > 1 ? (

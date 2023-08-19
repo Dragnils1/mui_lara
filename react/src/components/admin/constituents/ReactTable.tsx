@@ -2,6 +2,9 @@ import * as React from 'react'
 
 import axios from 'axios'
 import {
+    CellContext,
+    CoreRow,
+    RowData,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -18,8 +21,39 @@ interface tableProps {
     children?: React.ReactNode
 }
 
-const selectInput = (filterName: string, defaultValue: string) => {
-    switch (filterName) {
+declare module '@tanstack/react-table' {
+    interface TableMeta<TData extends RowData> {
+      updateData: (rowIndex: number, columnId: string, value: unknown) => void
+    }
+  }
+
+
+const editableInput = (row_arg: CellContext<FilterColumns, string>) => {
+
+    const { getValue, row, column: { id }, table } = row_arg
+    const initialValue = getValue()
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = React.useState(initialValue)
+
+    // When the input is blurred, we'll call our table meta's updateData function
+    const onBlur = () => {
+      table.options.meta?.updateData(row.index, id, value)
+    }
+
+    // If the initialValue is changed external, sync it up with our state
+    React.useEffect(() => {
+      setValue(initialValue)
+    }, [initialValue])
+
+    // return (
+    //   <input
+    //     value={value as string}
+    //     onChange={e => setValue(e.target.value)}
+    //     onBlur={onBlur}
+    //   />
+    // )
+
+    switch (row.getValue('filter_type')) {
         case 'date':
             return <TextField
                 label='Выберите дату'
@@ -28,6 +62,9 @@ const selectInput = (filterName: string, defaultValue: string) => {
                 InputLabelProps={{
                     shrink: true,
                 }}
+                value={value as string}
+                onChange={e => setValue(e.target.value)}
+                onBlur={onBlur}
             />
         case 'range':
             return <> dsa</>
@@ -36,17 +73,18 @@ const selectInput = (filterName: string, defaultValue: string) => {
 
         default:
             return <TextField
-                label='Выберите дату'
+                label='Ввeдите текст'
                 type="text"
                 sx={{ width: 220 }}
                 InputLabelProps={{
                     shrink: true,
                 }}
-                value={defaultValue ?? 'no value'}
+                value={value as string}
+                onChange={e => setValue(e.target.value)}
+                onBlur={onBlur}
             />
     }
-
-}
+  }
 
 const columnHelper = createColumnHelper<FilterColumns>()
 
@@ -76,10 +114,9 @@ const columns  = [
             />,
         footer: info => info.column.id,
     }),
-    columnHelper.accessor('updated_at', {
+    columnHelper.accessor('filter_type', {
         header: ({ table }) =>
             <>
-                
                 <span>Только для чтения</span>
             </>,
         cell: ({ row }) => <FormControlLabel control={<Switch defaultChecked />} label="Да" />,
@@ -87,22 +124,37 @@ const columns  = [
     }),
     columnHelper.accessor('default_value', {
         header: 'Значение по умолчанию',
-        cell: ({ row }) => selectInput(row.getValue('filter_type'), row.getValue('default_value')),
+        cell: (cellContext) => editableInput(cellContext),
         footer: info => info.column.id,
     }),
 ] 
+
+function useSkipper() {
+    const shouldSkipRef = React.useRef(true)
+    const shouldSkip = shouldSkipRef.current
+  
+    // Wrap a function with this to skip a pagination reset temporarily
+    const skip = React.useCallback(() => {
+      shouldSkipRef.current = false
+    }, [])
+  
+    React.useEffect(() => {
+      shouldSkipRef.current = true
+    })
+  
+    return [shouldSkip, skip] as const
+}
 
 
 
 const ReactTable = ({ filterData }: tableProps) => {
 
-    
-
-
     let { user_id } = useParams()
 
     const [data, setData] = React.useState(() => [...filterData])
     const [rowSelection, setRowSelection] = React.useState({})
+
+    const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
 
 
     const table = useReactTable({
@@ -113,21 +165,35 @@ const ReactTable = ({ filterData }: tableProps) => {
         state: {
             rowSelection,
         },
+        autoResetPageIndex,
+    // Provide our updateData function to our table meta
+    meta: {
+      updateData: (rowIndex, columnId, value) => {
+        // Skip page index reset until after next rerender
+        skipAutoResetPageIndex()
+        setData(old =>
+          old.map((row, index) => {
+            if (index === rowIndex) {
+              return {
+                ...old[rowIndex]!,
+                [columnId]: value,
+              }
+            }
+            return row
+          })
+        )
+      },
+    },
     })
+    
 
     const [selectedRowIds, setSelectedRowIds] = React.useState({});
     const selected_rows: FilterColumns[] = table.getSelectedRowModel().flatRows.map((row) => {
-        // readonly: row.original.updated_at что бы не париться с типами 
+
         return row.original
     });
 
-    // аlet ob: Record<string, string> = {}
-
-    // selected_rows.map(row => {
-    //     ob[row.firstName] = row.firstName
-    // })
-
-    console.log(selected_rows)
+    
 
     const sendData = (send_data: FilterColumns[]) => {
         axios.post(`/profile_actions/${user_id}`, {

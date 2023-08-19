@@ -71,7 +71,7 @@ class ProfileController extends Controller
         foreach ($filesForUpload as $key => $file) {
 
             $file_if_exist = $request->file($file);
-            $images_arr_from_request =  explode(",", $profile['images']);
+            $images_arr_from_request = explode(",", $profile['images']);
 
             if ($file_if_exist)
                 $images_arr_from_request[$key] = Storage::disk('public')->putFile('photos', $file_if_exist) ?? '';
@@ -84,20 +84,23 @@ class ProfileController extends Controller
 
         //некоторые поля могут не передаваться в запросе
         foreach ($maybeUndefinedFilds as $value) {
-            if (!isset($profile[$value])) $profile[$value] = '';
+            if (!isset($profile[$value]))
+                $profile[$value] = '';
         }
 
         foreach ($profile as $k => $v) {
-            if(in_array($k, $profileActionsColumns)) {
+            if (in_array($k, $profileActionsColumns)) {
                 $profileActions[$k] = $v;
                 unset($profile[$k]);
-            };
+            }
+            ;
         }
 
 
         // Удаляем лишние элементы
         foreach ($elementsForDelete as $el) {
-            if (isset($profile[$el])) unset($profile[$el]);
+            if (isset($profile[$el]))
+                unset($profile[$el]);
         }
 
         // Hash the password
@@ -110,7 +113,7 @@ class ProfileController extends Controller
 
 
         //создаем запись в таблице действий (нужны для сотрудников и работы приложения)
-        if($user->source_type == 'Квиз') {
+        if ($user->source_type == 'Квиз') {
 
             auth()->login($user);
 
@@ -121,14 +124,14 @@ class ProfileController extends Controller
             $token = auth()->user()->createToken('auth_token')->plainTextToken;
 
             return response()->json([
-                "user"  => $user,
-                "token"  => $token
-             ]);
+                "user" => $user,
+                "token" => $token
+            ]);
         }
 
         return response()->json([
-            "user"  => $user
-         ]);
+            "user" => $user
+        ]);
 
 
     }
@@ -139,7 +142,9 @@ class ProfileController extends Controller
     public function show(string $id)
     {
 
-        $profile = Profile::where('id', $id)->union(ProfileActions::class)->get()->toArray();
+        $profile = Profile::where('profiles.id', $id)
+            ->join('profile_actions', 'profile_actions.profile_id', '=', 'profiles.id')
+            ->get()->toArray();
 
         return response()->json($profile);
     }
@@ -179,7 +184,8 @@ class ProfileController extends Controller
         ];
 
         // Hash the password
-        if(isset($profile_from_request['password'])) $profile_from_request['password'] = Hash::make($profile_from_request['password']);
+        if (isset($profile_from_request['password']))
+            $profile_from_request['password'] = Hash::make($profile_from_request['password']);
 
 
         //Сохраняем картинки и добавляем пути в images Array который
@@ -187,7 +193,7 @@ class ProfileController extends Controller
         foreach ($filesForUpload as $key => $file) {
 
             $file_if_exist = $request->file($file);
-            $images_arr_from_request =  explode(",", $profile_from_request['images']);
+            $images_arr_from_request = explode(",", $profile_from_request['images']);
 
             if ($file_if_exist)
                 $images_arr_from_request[$key] = Storage::disk('public')->putFile('photos', $file_if_exist) ?? '';
@@ -200,15 +206,17 @@ class ProfileController extends Controller
 
         //Извлекаем колонки для действий и ложим в отдельный массив
         foreach ($profile_from_request as $k => $v) {
-            if(in_array($k, $profileActionsColumns)) {
+            if (in_array($k, $profileActionsColumns)) {
                 $profileActions[$k] = $v;
                 unset($profile_from_request[$k]);
-            };
+            }
+            ;
         }
 
         // Удаляем лишние элементы
         foreach ($elementsForDelete as $el) {
-            if (isset($profile_from_request[$el])) unset($profile_from_request[$el]);
+            if (isset($profile_from_request[$el]))
+                unset($profile_from_request[$el]);
         }
 
 
@@ -219,10 +227,10 @@ class ProfileController extends Controller
         $profile_actions->update($profileActions);
 
         return response()->json([
-                "updated"  => $profile && $profile_actions
-            ]);
+            "updated" => $profile && $profile_actions
+        ]);
 
-            //доделать на клиенте
+        //доделать на клиенте
     }
 
     /**
