@@ -25,7 +25,7 @@ FROM node:20-alpine3.17 AS node
 WORKDIR /app
 
 COPY package.json           /app
-COPY /public                /app/public
+# COPY /public                /app/public
 # COPY package-lock.json      /app
 COPY vite.config.js         /app
 COPY /resources             /app/resources
@@ -49,8 +49,8 @@ RUN docker-php-ext-configure gd --enable-gd --with-freetype
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 COPY . /var/www
-COPY --from=composer /app/vendor                /var/www/html/vendor
-COPY --from=node     /app/public                /var/www/html/public/
+COPY --from=composer /app/vendor                /var/www/vendor
+# COPY --from=node     /app/public                /var/www/public/
 # COPY --from=node     /app/mix-manifest.json     /var/www/html/mix-manifest.json
 
 
