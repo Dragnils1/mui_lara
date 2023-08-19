@@ -9,4 +9,5 @@ export type Filter = {
 
 export interface FilterColumns extends Filter {
     readonly: boolean | null
+    createdByUser: boolean | null
 }

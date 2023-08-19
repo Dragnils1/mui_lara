@@ -42,16 +42,18 @@ const Profile: FC = () => {
             const userFiltersArr = JSON.parse(userFiltersData)
 
             const userFilterIds =  userFiltersArr.map((userFilter: any) => {
-                return Number(userFilter.id) - 1
+                // return Number(userFilter.id) - 1
+                return userFilter.id
             })
                  
             return filtersData.map((filter) => {
-                const filter_id = Number(filter.id) - 1
-
-                if(filter_id in userFilterIds) {
-                    return userFiltersArr[filter_id]               
+                // const filter_id = Number(filter.id) - 1
+                const userFilterIndex = userFilterIds.indexOf(filter.id) 
+                
+                if(userFilterIndex !== -1) {
+                    return {...userFiltersArr[userFilterIndex], createdByUser: true }             
                 }
-                return filter
+                return {...filter, createdByUser: false}
             })
             
         } else {
@@ -60,7 +62,7 @@ const Profile: FC = () => {
 
     }, [filtersData.data, data])
 
-    data && filtersData.data && console.log(mergeFilterData((filtersData.data as unknown) as FilterColumns[],  data[0].filters));
+    // data && filtersData.data && console.log(mergeFilterData((filtersData.data as unknown) as FilterColumns[],  data[0].filters));
     
 
     useEffect(() => {
