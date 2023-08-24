@@ -9,7 +9,7 @@ COPY composer.lock /app
 RUN composer install        \
     --ignore-platform-reqs  \
     --no-ansi               \
-    --no-autoloader         \
+    # --no-autoloader         \
     --no-interaction        \
     --no-scripts
 
@@ -60,6 +60,8 @@ RUN addgroup -g 1000 -S www && \
 COPY --chown=www:www-data . /var/www
 
 WORKDIR /var/www
+
+ENTRYPOINT php artisan serve
 
 ### PHP
 ########################################################################

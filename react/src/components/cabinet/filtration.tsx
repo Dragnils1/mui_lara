@@ -7,7 +7,7 @@ import ZodiakDropDown from "../quiz/zodiakDropDown";
 import FormInputRadioButton from "../quiz/form-component/FormInputRadioButtons";
 import LangLove from "../quiz/langLoveDropDown";
 import { purple } from "@mui/material/colors";
-import { useAppDispatch } from "../../hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { changeFilterObject, filtrationObj } from "../../reducers/cabinetSlice";
 import FormInputText from "../quiz/form-component/FormInputText";
 import MultipleSelectCheckmarks from "../quiz/form-component/FormMultipleSelectCheckmarks";
@@ -23,6 +23,12 @@ const Filtration: FC = () => {
     const Region = ['01', '02,102', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16,116', '17', '18', '19', '95', '21', '22', '23,93', '24', '25,125', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50,90,150', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '62', '63,163', '64', '65', '66,96', '67', '68', '69', '70', '71', '72', '73', '74,174', '75', '76', '77,97,99,177', '78,98', '79', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89'];
     const { register, handleSubmit, formState: { errors }, control, setValue, watch } = useForm<filtrationObj>();
     const [params, setParams] = useState('')
+
+    const { user: {profile_actions} } = useAppSelector(state => state.auth)
+
+    console.log(profile_actions);
+    
+    
 
     const reset = () => dispatch(changeFilterObject(''))
     // const reset = () => dispatch(changeFilterObject({} as filtrationObj))

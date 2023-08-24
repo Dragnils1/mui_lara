@@ -1,5 +1,5 @@
 
-
+docker работает на 8000 порту
 
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",

@@ -34,6 +34,7 @@ class AuthorizationController extends Controller
 
         $userWithMd5Pass = Profile::where('email', $request->email)
                   ->where('password',md5($request->password))
+                  ->with('profile_actions')
                   ->first();
 
         $userWithBcryptPass = Auth::attempt($credentials);
@@ -69,7 +70,8 @@ class AuthorizationController extends Controller
     public function checkAuth()
     {
         if (Auth::check()) return response()->json([
-            "user"  => Auth::user()
+            "user"  => Auth::user()->profile_actions()
+            // ->with('profile_actions')
          ]);
 
         return response()->json([
