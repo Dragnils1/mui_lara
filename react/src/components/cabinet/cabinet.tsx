@@ -37,6 +37,10 @@ const Cabinet: FC = () => {
     const [user, setUser] = useState<Data>();
     const [open, setOpen] = useState(false);
 
+    
+    
+    
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -49,11 +53,11 @@ const Cabinet: FC = () => {
         fd.append('id', AuthSelector.user.id)
         fd.append('_method', "PUT")
 
-        submitData({name: `dashboard/${AuthSelector.user.id}`, data: fd})
+        submitData({ name: `dashboard/${AuthSelector.user.id}`, data: fd })
     }
 
 
-    return(
+    return (
         <>
             <Box >
                 {/* {(profile.data && typeof profile.data !== 'string') ?
@@ -76,51 +80,51 @@ const Cabinet: FC = () => {
                             <Button onClick={handleClose}>Закрыть</Button>
                         </DialogActions>
                     </Dialog>
-                    : null }
-                    {/* <T>Нажмите на звездочку в углу фото, что бы добавить в избранное:</T> */}
+                    : null}
+                {/* <T>Нажмите на звездочку в углу фото, что бы добавить в избранное:</T> */}
                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12, lg: 16 }}
-                    sx={{justifyContent: 'center'}}>
+                    sx={{ justifyContent: 'center' }}>
                     {profile.data &&
                         profiles.data?.filter(elem => elem.vip === '1' &&
-                            elem.gender[0] !== (AuthSelector.user.gender[0] ?? "Ж") )
-                        .map(elem => {
+                            elem.gender[0] !== (AuthSelector.user.gender[0] ?? "Ж"))
+                            .map(elem => {
 
-                        return (
-                            <Grid item xs={2} sm={3} md={3} lg={3} key={elem.id}  >
-                                <Card  >
-                                    <CardActionArea
-                                        onClick={() => {
-                                            handleOpen()
-                                            setUser(elem)
-                                        }}>
-                                        <CardMedia
-                                            component="img"
-                                            loading="lazy"
-                                            height="140"
-                                            image={elem.images.split(',')[0] ? process.env.BASE_PATH_FOR_IMAGES + elem.images.split(',')[0]
-                                                : '/images/noImg.jpg'}
-                                            alt="Фото профиля"
-                                            sx={{ '&': { objectFit: 'cover' }, minHeight: '17vh' }}
-                                        />
-                                        <Typography gutterBottom variant="h6" component="div" sx={{
-                                            position: 'absolute', top: '72%', left: '2%', bgcolor: purple[50],
-                                            borderRadius: '8px', padding: '3px'
-                                        }}>
-                                            {elem.user_OutNum ? elem.user_OutNum : null}
-                                        </Typography>
-                                        <StarIcon
-                                            // sx={elem.vip !== '0' ? { position: 'absolute', top: '2%', right: '2%', color: 'orange' } : { position: 'absolute', top: '2%', right: '2%'}}
-                                            sx={{ position: 'absolute', top: '2%', right: '2%', color: 'rgba(0, 0, 0, 0.7)' }}
-                                            onClick={(e) => { e.currentTarget.style.color = 'orange'; addLikedPerson(elem.id) }} />
-                                        <AutoAwesomeIcon
-                                            sx={{ position: 'absolute', top: '72%', right: '2%', color: purple[200] }}
-                                            onClick={() => console.log('smth2')} />
-                                    </CardActionArea>
-                                </Card>
-                            </Grid>
-                        )
+                                return (
+                                    <Grid item xs={2} sm={3} md={3} lg={3} key={elem.id}  >
+                                        <Card  >
+                                            <CardActionArea
+                                                onClick={() => {
+                                                    handleOpen()
+                                                    setUser(elem)
+                                                }}>
+                                                <CardMedia
+                                                    component="img"
+                                                    loading="lazy"
+                                                    height="140"
+                                                    image={elem.images.split(',')[0] ? process.env.BASE_PATH_FOR_IMAGES + elem.images.split(',')[0]
+                                                        : '/images/noImg.jpg'}
+                                                    alt="Фото профиля"
+                                                    sx={{ '&': { objectFit: 'cover' }, minHeight: '17vh' }}
+                                                />
+                                                <Typography gutterBottom variant="h6" component="div" sx={{
+                                                    position: 'absolute', top: '72%', left: '2%', bgcolor: purple[50],
+                                                    borderRadius: '8px', padding: '3px'
+                                                }}>
+                                                    {elem.user_OutNum ? elem.user_OutNum : null}
+                                                </Typography>
+                                                <StarIcon
+                                                    // sx={elem.vip !== '0' ? { position: 'absolute', top: '2%', right: '2%', color: 'orange' } : { position: 'absolute', top: '2%', right: '2%'}}
+                                                    sx={{ position: 'absolute', top: '2%', right: '2%', color: 'rgba(0, 0, 0, 0.7)' }}
+                                                    onClick={(e) => { e.currentTarget.style.color = 'orange'; addLikedPerson(elem.id) }} />
+                                                <AutoAwesomeIcon
+                                                    sx={{ position: 'absolute', top: '72%', right: '2%', color: purple[200] }}
+                                                    onClick={() => console.log('smth2')} />
+                                            </CardActionArea>
+                                        </Card>
+                                    </Grid>
+                                )
 
-                    })}
+                            })}
                 </Grid>
                 <hr />
                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12, lg: 16 }}
@@ -133,39 +137,39 @@ const Cabinet: FC = () => {
                         })
                         .map(elem => {
 
-                        return (
-                            <Grid item xs={2} sm={3} md={3} lg={3} key={elem.id}  >
-                                <Card  >
-                                    <CardActionArea
-                                        onClick={() => {
-                                            handleOpen()
-                                            setUser(elem)
-                                        }}>
-                                        <CardMedia
-                                            component="img"
-                                            loading="lazy"
-                                            height="140"
-                                            image={elem.images.split(',')[0] ? process.env.BASE_PATH_FOR_IMAGES + elem.images.split(',')[0]
-                                                : '/images/noImg.jpg'}
-                                            alt="Фото профиля"
-                                            sx={{ '&': { objectFit: 'cover' }, minHeight: '17vh' }}
-                                        />
-                                        <Typography gutterBottom variant="h6" component="div" sx={{
-                                            position: 'absolute', top: '72%', left: '2%', bgcolor: purple[50],
-                                            borderRadius: '8px', padding: '3px'
-                                        }}>
-                                            {elem.user_OutNum ? elem.user_OutNum : null}
-                                        </Typography>
-                                        <StarIcon
-                                            // sx={elem.vip !== '0' ? { position: 'absolute', top: '2%', right: '2%', color: 'orange' } : { position: 'absolute', top: '2%', right: '2%'}}
-                                            sx={{ position: 'absolute', top: '2%', right: '2%', color: 'rgba(0, 0, 0, 0.7)' }}
-                                            onClick={(e) => { e.currentTarget.style.color = 'orange'; addLikedPerson(elem.id) }} />
-                                    </CardActionArea>
-                                </Card>
-                            </Grid>
-                        )
+                            return (
+                                <Grid item xs={2} sm={3} md={3} lg={3} key={elem.id}  >
+                                    <Card  >
+                                        <CardActionArea
+                                            onClick={() => {
+                                                handleOpen()
+                                                setUser(elem)
+                                            }}>
+                                            <CardMedia
+                                                component="img"
+                                                loading="lazy"
+                                                height="140"
+                                                image={elem.images.split(',')[0] ? process.env.BASE_PATH_FOR_IMAGES + elem.images.split(',')[0]
+                                                    : '/images/noImg.jpg'}
+                                                alt="Фото профиля"
+                                                sx={{ '&': { objectFit: 'cover' }, minHeight: '17vh' }}
+                                            />
+                                            <Typography gutterBottom variant="h6" component="div" sx={{
+                                                position: 'absolute', top: '72%', left: '2%', bgcolor: purple[50],
+                                                borderRadius: '8px', padding: '3px'
+                                            }}>
+                                                {elem.user_OutNum ? elem.user_OutNum : null}
+                                            </Typography>
+                                            <StarIcon
+                                                // sx={elem.vip !== '0' ? { position: 'absolute', top: '2%', right: '2%', color: 'orange' } : { position: 'absolute', top: '2%', right: '2%'}}
+                                                sx={{ position: 'absolute', top: '2%', right: '2%', color: 'rgba(0, 0, 0, 0.7)' }}
+                                                onClick={(e) => { e.currentTarget.style.color = 'orange'; addLikedPerson(elem.id) }} />
+                                        </CardActionArea>
+                                    </Card>
+                                </Grid>
+                            )
 
-                    })}
+                        })}
                 </Grid>
                 <Outlet />
             </Box>

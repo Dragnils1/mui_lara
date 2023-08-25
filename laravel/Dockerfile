@@ -61,5 +61,7 @@ COPY --chown=www:www-data . /var/www
 
 WORKDIR /var/www
 
+ENTRYPOINT php artisan serve
+
 ### PHP
 ########################################################################

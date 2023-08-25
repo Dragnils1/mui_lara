@@ -21,8 +21,12 @@ services:
     working_dir: /var/www
     volumes:
         - ./laravel:/var/www
+        - './public:/var/www/html'
+        - ./laravel/composer.json:/var/www
+    # expose:
+    #   - 8080
     ports:
-      - "8000:8000"
+      - "8001:8000"
     networks:
       - mui-lara-network
       - db

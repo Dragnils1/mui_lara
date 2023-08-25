@@ -1,3 +1,5 @@
+import { Filter } from "./filter";
+
 export interface Person {
     about: string;
     birthday: string;
@@ -45,4 +47,20 @@ export interface Person {
     year: string | number;
     zodiak: string;
     role: string;
+    profile_actions: ProfileActions | undefined
 }
+
+export interface ProfileActions {
+    color: string | null
+    created_at: string
+    defer: number
+    dragableColor: string | null
+    filters: Filter[]
+    id: number
+    next_contact_date: string | null
+    profile_id: number
+    status: string
+    updated_at: string
+    visible_pass: string | null
+}
+
