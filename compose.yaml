@@ -21,7 +21,7 @@ services:
     working_dir: /var/www
     volumes:
         - ./laravel:/var/www
-        - './public:/var/www/html'
+        - ./laravel/public:/var/www/html
         - ./laravel/composer.json:/var/www
     # expose:
     #   - 8080
