@@ -6,10 +6,10 @@ FROM composer:2.5.8 AS composer
 COPY composer.json /app
 COPY composer.lock /app
 
-RUN composer install        \
+RUN composer install            \
     --ignore-platform-reqs  \
     --no-ansi               \
-    --no-autoloader         \
+    # --no-autoloader         \
     --no-interaction        \
     --no-scripts
 
