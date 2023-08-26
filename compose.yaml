@@ -22,7 +22,7 @@ services:
     volumes:
         - ./laravel:/var/www
         - ./laravel/public:/var/www/html
-        - ./laravel/composer.json:/var/www
+        - ./laravel/composer.json:/var/www/composer.json
     # expose:
     #   - 8080
     ports:
