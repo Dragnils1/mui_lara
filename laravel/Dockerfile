@@ -6,7 +6,9 @@ FROM composer:2.5.8 AS composer
 COPY composer.json /app
 COPY composer.lock /app
 
-# RUN 
+#apt install shold be ended early
+RUN sleep 15 
+
 
 RUN composer install        \
     --ignore-platform-reqs  \
