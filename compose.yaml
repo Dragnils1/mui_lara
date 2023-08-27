@@ -23,10 +23,10 @@ services:
         - ./laravel:/var/www
         - ./laravel/public:/var/www/html
         - ./laravel/composer.json:/var/www/composer.json
-    # expose:
-    #   - 8080
+    expose:
+      - "8000"
     ports:
-      - "8001:8000"
+      - "8000:8000"
     networks:
       - mui-lara-network
       - db

@@ -40,6 +40,7 @@ COPY /resources             /app/resources
 
 FROM php:8.2-fpm-alpine
 
+
 RUN apk update && apk add --no-cache \
     oniguruma-dev                    \
     libzip-dev                       \
@@ -72,7 +73,9 @@ RUN chown -R www-data:www-data \
 
 WORKDIR /var/www
 
+RUN cp ./.env.example ./.env.production
 
-ENTRYPOINT php artisan serve
+EXPOSE 8000
+ENTRYPOINT php artisan serve --host=0.0.0.0 --port=8000
 ### PHP
 ########################################################################
