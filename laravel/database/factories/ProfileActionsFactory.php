@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 
 /**
@@ -19,10 +20,13 @@ class ProfileActionsFactory extends Factory
     public function definition(): array
     {
         return [
-
-            //
+            'defer' => 0,
+            'status' => env('STATUS_FOR_NEW_USERS'),
+            'color' => '',
+            'profile_id' => 1,
+            'next_contact_date' => Str::random(10),
+            'visible_pass' => Str::random(10),
+            'dragableColor' => ''
         ];
     }
-
-
 }

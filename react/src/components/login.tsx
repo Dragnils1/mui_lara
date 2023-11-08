@@ -90,35 +90,35 @@ export default function Login() {
             })
         }
 
-        if (data && isSuccess) {
+        // if (data && isSuccess) {
 
-            const whoIs = data.whoIs
+        //     const whoIs = data.whoIs
 
-            if (whoIs !== '[]') {
+        //     if (whoIs !== '[]') {
 
-                let authData: MainState = { Account: data.Account, role: data.whoIs, easyRole: "unlogined"}
+        //         let authData: MainState = { Account: data.Account, role: data.whoIs, easyRole: "unlogined"}
 
-                if (whoIs === 'ok_admin' || whoIs === 'ok_mainModer' || whoIs === 'consideration'
-                    || whoIs === 'ok_Moder') {
+        //         if (whoIs === 'ok_admin' || whoIs === 'ok_mainModer' || whoIs === 'consideration'
+        //             || whoIs === 'ok_Moder') {
 
-                    whoIs !== 'ok_Moder' ? setCookie('role', whoIs, 7) : setCookie('intModer', whoIs, 7)
+        //             whoIs !== 'ok_Moder' ? setCookie('role', whoIs, 7) : setCookie('intModer', whoIs, 7)
 
-                    authData.easyRole = "admin";
-                    navigate('../admin/moderation', { replace: true })
-                } else if (whoIs === 'ok_user') {
-                    setCookie('role', whoIs, 7)
-                    authData.easyRole = "user";
-                    navigate(`../cabinet/${data.Account.id}`, { replace: true });
-                }
+        //             authData.easyRole = "admin";
+        //             navigate('../admin/moderation', { replace: true })
+        //         } else if (whoIs === 'ok_user') {
+        //             setCookie('role', whoIs, 7)
+        //             authData.easyRole = "user";
+        //             navigate(`../cabinet/${data.Account.id}`, { replace: true });
+        //         }
 
-                dispatch(auth(authData))
+        //         dispatch(auth(authData))
 
-            } else {
-                enqueueSnackbar('Упс... Неправильный логин или пороль', {
-                    variant: 'error',
-                })
-            }
-        }
+        //     } else {
+        //         enqueueSnackbar('Упс... Неправильный логин или пороль', {
+        //             variant: 'error',
+        //         })
+        //     }
+        // }
 
         if (isError) {
             enqueueSnackbar('Упс... Ошибка на сервере', {

@@ -7,3 +7,5 @@ docker работает на 8000 порту
     "@mui/icons-material": "^6",
     "@mui/material": "^6",
     "@mui/styles": "^5.4.2",
+
+  "proxy": "http://backend:8000/"

@@ -14,7 +14,12 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\Profile::factory(10)->create();
 
-        \App\Models\Profile::factory(10)->create();
-        \App\Models\User::factory(10)->create();
+        // \App\Models\Profile::factory(10)->create();
+        // \App\Models\User::factory(10)->create();
+
+        $this->call([
+            ProfileSeeder::class,
+            ProfileActionsSeeder::class,
+        ]);
     }
 }

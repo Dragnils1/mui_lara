@@ -6,6 +6,7 @@ export interface FormInputProps {
     name: `${string}` | `${number}`;
     control: Control<any>;
     label: string;
+    input_value?: string;
     setValue?: any;
     rules?: any;
     sx?: SxProps<Theme>

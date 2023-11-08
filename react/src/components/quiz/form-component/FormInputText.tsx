@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { FormInputProps } from "../../../types/formInputProps";
 
 
-const FormInputText = ({ name, control, label, rules, sx }: FormInputProps) => {
+const FormInputText = ({ name, control, label, rules, sx, input_value = " " }: FormInputProps) => {
     return (
         <Controller
             name={name}
@@ -20,7 +20,7 @@ const FormInputText = ({ name, control, label, rules, sx }: FormInputProps) => {
                     size="small"
                     error={!!error}
                     onChange={onChange}
-                    value={value ?? ' '}
+                    value={value ?? input_value}
                     fullWidth
                     label={label}
                     variant="outlined"
